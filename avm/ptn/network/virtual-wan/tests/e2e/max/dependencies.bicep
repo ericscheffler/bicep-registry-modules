@@ -48,10 +48,10 @@ resource vnet2 'Microsoft.Network/virtualNetworks@2024-07-01' = {
 }
 
 @description('The ID of the Azure Firewall Policy.')
-output azureFirewallPolicyId string = azureFirewallPolicy.id
+output azureFirewallPolicyResourceId string = azureFirewallPolicy.id
 
 @description('The resource ID of the first virtual network.')
-output virtualNetwork1Id string = vnet1.id
+output virtualNetwork1ResourceId string = vnet1.id
 
 @description('The name of the first virtual network.')
 output virtualNetwork1Name string = vnet1.name
@@ -63,7 +63,7 @@ output virtualNetwork1Location string = vnet1.location
 output virtualHub1Location string = vnet1.location
 
 @description('The resource ID of the second virtual network.')
-output virtualNetwork2Id string = vnet2.id
+output virtualNetwork2ResourceId string = vnet2.id
 
 @description('The name of the second virtual network.')
 output virtualNetwork2Name string = vnet2.name

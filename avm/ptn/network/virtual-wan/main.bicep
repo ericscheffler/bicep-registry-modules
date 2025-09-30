@@ -663,6 +663,7 @@ type virtualHubParameterType = {
     @description('Optional. Diagnostic settings for the Azure Firewall in the Secure Hub.')
     diagnosticSettings: diagnosticSettingFullType[]?
   }?
+  
   @description('Optional. SKU for the Virtual Hub.')
   sku: ('Standard' | 'Basic')?
 

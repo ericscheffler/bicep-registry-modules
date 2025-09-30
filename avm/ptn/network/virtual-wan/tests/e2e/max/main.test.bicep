@@ -55,7 +55,7 @@ module testDeployment '../../../main.bicep' = [
     name: '${uniqueString(deployment().name, resourceLocation)}-test-${serviceShort}-${iteration}'
     params: {
       virtualWanParameters: {
-        virtualWanName: 'dep-${namePrefix}-vw-${serviceShort}'
+        virtualWanName: 'dep-${namePrefix}-vwan-${serviceShort}'
         location: resourceLocation
         allowBranchToBranchTraffic: true
         type: 'Standard'
@@ -102,6 +102,16 @@ module testDeployment '../../../main.bicep' = [
             azureFirewallSku: 'Standard'
             azureFirewallPublicIPCount: 1
           }
+          hubVirtualNetworkConnections: [
+            {
+              name: nestedDependencies.outputs.virtualNetwork1Name
+              remoteVirtualNetworkResourceId: nestedDependencies.outputs.virtualNetwork1ResourceId
+            }
+            {
+              name: nestedDependencies.outputs.virtualNetwork2Name
+              remoteVirtualNetworkResourceId: nestedDependencies.outputs.virtualNetwork2ResourceId
+            }
+          ]
           tags: {
             HubType: 'Transit'
           }
@@ -114,41 +124,3 @@ module testDeployment '../../../main.bicep' = [
     }
   }
 ]
-
-module testVpnSite 'br/public:avm/res/network/vpn-site:0.3.1' = {
-  scope: resourceGroup
-  params: {
-    name: 'dep-${namePrefix}-vpnSite-${serviceShort}'
-    virtualWanId: testDeployment[0].outputs.virtualWan.resourceId
-    vpnSiteLinks: [
-      {
-        name: '${namePrefix}-vSite-${serviceShort}'
-        properties: {
-          bgpProperties: {
-            asn: 65010
-            bgpPeeringAddress: '1.1.1.1'
-          }
-          ipAddress: '1.2.3.4'
-          linkProperties: {
-            linkProviderName: 'contoso'
-            linkSpeedInMbps: 5
-          }
-        }
-      }
-      {
-        name: 'Link1'
-        properties: {
-          bgpProperties: {
-            asn: 65020
-            bgpPeeringAddress: '192.168.1.0'
-          }
-          ipAddress: '2.2.2.2'
-          linkProperties: {
-            linkProviderName: 'contoso'
-            linkSpeedInMbps: 5
-          }
-        }
-      }
-    ]
-  }
-}
