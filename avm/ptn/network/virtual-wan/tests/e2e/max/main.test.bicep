@@ -18,7 +18,8 @@ param resourceLocation string = deployment().location
 param serviceShort string = 'nvwanmax'
 
 @description('Optional. A token to inject into the name of each resource. This value can be automatically injected by the CI.')
-param namePrefix string = '#_namePrefix_#'
+//param namePrefix string = '#_namePrefix_#'
+param namePrefix string = 'maxTest'
 
 // ============ //
 // Dependencies //
@@ -62,9 +63,9 @@ module testDeployment '../../../main.bicep' = [
           createP2sVpnServerConfiguration: true
           p2sVpnServerConfigurationName: 'dep-${namePrefix}-p2s-${serviceShort}'
           vpnAuthenticationTypes: ['AAD']
-          aadTenant: '${environment().authentication.loginEndpoint}tenant-id'
-          aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-          aadIssuer: 'https://sts.windows.net/tenant-id/'
+          aadTenant: '${environment().authentication.loginEndpoint}11111111-1111-1111-1111-111111111111'
+          aadAudience: '11111111-1234-4321-1234-111111111111'
+          aadIssuer: 'https://sts.windows.net/11111111-1111-1111-1111-111111111111/'
         }
         tags: {
           Environment: 'Test'
@@ -107,7 +108,6 @@ module testDeployment '../../../main.bicep' = [
       ]
       tags: {
         Environment: 'Test'
-        'hidden-title': 'This is visible in the resource name'
         Purpose: 'Maximum functionality test'
       }
     }
