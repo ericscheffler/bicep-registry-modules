@@ -85,6 +85,7 @@ module testDeployment '../../../main.bicep' = [
             connectionConfigurationsName: 'default'
             vpnClientAddressPoolAddressPrefixes: ['192.168.1.0/24']
             vpnGatewayScaleUnit: 1
+            vpnGatewayAssociatedRouteTable: 'defaultRouteTable'
           }
           s2sVpnParameters: {
             deployS2SVpnGateway: true
@@ -119,11 +120,6 @@ module testVpnSite 'br/public:avm/res/network/vpn-site:0.3.1' = {
   params: {
     name: 'dep-${namePrefix}-vpnSite-${serviceShort}'
     virtualWanId: testDeployment[0].outputs.virtualWan.resourceId
-    ipAddress: '100.1.125.50'
-    bgpProperties: {
-      asn: 63000
-      bgpPeeringAddress: '10.60.60.10'
-    }
     vpnSiteLinks: [
       {
         name: '${namePrefix}-vSite-${serviceShort}'
