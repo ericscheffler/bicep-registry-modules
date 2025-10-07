@@ -45,6 +45,8 @@ module nestedDependencies 'dependencies.bicep' = {
     virtualNetwork1Location: 'eastus'
     virtualNetwork2Name: 'dep-${namePrefix}-vnet2-${serviceShort}'
     virtualNetwork2Location: 'westus2'
+    publicIPPrefixName: 'dep-${namePrefix}-pip-prefix-${serviceShort}'
+    managedIdentityName: 'dep-${namePrefix}-mi-${serviceShort}'
   }
 }
 
@@ -97,29 +99,74 @@ module testDeployment '../../../main.bicep' = [
             expressRouteGatewayName: 'unused'
           }
           secureHubParameters: {
-            deploySecureHub: false
-            azureFirewallName: 'unused'
-            azureFirewallSku: 'Standard'
-            azureFirewallPublicIPCount: 1
+            deploySecureHub: true
+            azureFirewallName: 'dep-${namePrefix}-fw-${serviceShort}'
+            azureFirewallSku: 'Premium'
+            azureFirewallPublicIPCount: 2
+            firewallPolicyResourceId: nestedDependencies.outputs.azureFirewallPolicyResourceId
+            publicIPAddressObject: {
+              name: 'dep-${namePrefix}-fw-pip-${serviceShort}'
+              publicIPAllocationMethod: 'Static'
+              publicIPPrefixResourceId: nestedDependencies.outputs.publicIPPrefixResourceId
+              skuName: 'Standard'
+              skuTier: 'Regional'
+            }
+            availabilityZones: [1, 2, 3]
+            threatIntelMode: 'Alert'
+            autoscaleMinCapacity: 2
+            autoscaleMaxCapacity: 10
+            diagnosticSettings: [
+              {
+                name: 'diag-fw-${serviceShort}'
+                logCategoriesAndGroups: [
+                  {
+                    categoryGroup: 'allLogs'
+                    enabled: true
+                  }
+                ]
+                metricCategories: [
+                  {
+                    category: 'AllMetrics'
+                    enabled: true
+                  }
+                ]
+              }
+            ]
+            roleAssignments: [
+              {
+                name: guid('Custom seed ${namePrefix}${serviceShort}')
+                roleDefinitionIdOrName: 'Reader'
+                principalId: nestedDependencies.outputs.managedIdentityPrincipalId
+                principalType: 'ServicePrincipal'
+              }
+            ]
+            routingIntent: {
+              internetToFirewall: true
+              privateToFirewall: true
+            }
           }
           hubVirtualNetworkConnections: [
             {
               name: nestedDependencies.outputs.virtualNetwork1Name
               remoteVirtualNetworkResourceId: nestedDependencies.outputs.virtualNetwork1ResourceId
+              enableInternetSecurity: true
             }
             {
               name: nestedDependencies.outputs.virtualNetwork2Name
               remoteVirtualNetworkResourceId: nestedDependencies.outputs.virtualNetwork2ResourceId
+              enableInternetSecurity: true
             }
           ]
           tags: {
-            HubType: 'Transit'
+            HubType: 'Secure'
+            FirewallEnabled: 'true'
           }
         }
       ]
       tags: {
-        Environment: 'Test'
-        Purpose: 'Maximum functionality test'
+        'hidden-title': 'This is visible in the resource name'
+        Environment: 'Non-Prod'
+        Role: 'DeploymentValidation'
       }
     }
   }

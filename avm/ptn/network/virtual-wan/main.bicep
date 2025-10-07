@@ -1,5 +1,6 @@
 metadata name = 'Azure Virtual WAN'
-metadata description = 'This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.'
+
+
 metadata owner = 'Azure/module-maintainers'
 metadata version = '0.1.0'
 
@@ -80,9 +81,14 @@ module firewallModule 'br/public:avm/res/network/azure-firewall:0.8.0' = [
       publicIPAddressObject: virtualHub.?secureHubParameters.?publicIPAddressObject
       publicIPResourceID: virtualHub.?secureHubParameters.?publicIPResourceID
       additionalPublicIpConfigurations: virtualHub.?secureHubParameters.?additionalPublicIpConfigurationResourceIds
-      //enableForcedTunneling: virtualHub.?secureHubParameters.?enableForcedTunneling
-      //managementIPAddressObject: virtualHub.?secureHubParameters.?managementIPAddressObject
-      //managementIPResourceID: virtualHub.?secureHubParameters.?managementIPResourceID
+      availabilityZones: virtualHub.?secureHubParameters.?availabilityZones
+      threatIntelMode: virtualHub.?secureHubParameters.?threatIntelMode
+      enableForcedTunneling: virtualHub.?secureHubParameters.?enableForcedTunneling
+      managementIPAddressObject: virtualHub.?secureHubParameters.?managementIPAddressObject
+      managementIPResourceID: virtualHub.?secureHubParameters.?managementIPResourceID
+      autoscaleMinCapacity: virtualHub.?secureHubParameters.?autoscaleMinCapacity
+      autoscaleMaxCapacity: virtualHub.?secureHubParameters.?autoscaleMaxCapacity
+      roleAssignments: virtualHub.?secureHubParameters.?roleAssignments
       enableTelemetry: enableTelemetry
       diagnosticSettings: virtualHub.?secureHubParameters.?diagnosticSettings
       tags: tags ?? virtualHub.?tags
@@ -559,9 +565,6 @@ type virtualHubParameterType = {
       @description('Optional. Connection bandwidth.')
       connectionBandwidth: int?
 
-      @description('Optional. Enable BGP for the connection.')
-      enableBgp: bool?
-
       @description('Optional. Enable internet security for the connection.')
       enableInternetSecurity: bool?
 
@@ -625,14 +628,80 @@ type virtualHubParameterType = {
       @description('Required. SKU tier for the public IP address.')
       skuTier: ('Regional')
     }?
+    
     @description('Optional. Resource ID of the public IP address.')
     publicIPResourceID: string?
 
     @description('Optional. Additional public IP configuration resource IDs.')
-    additionalPublicIpConfigurationResourceIds: []?
+    additionalPublicIpConfigurationResourceIds: string[]?
 
     @description('Optional. Routing intent for the Azure Firewall.')
     routingIntent: routingIntentType?
+
+    @description('Optional. Availability zones for the Azure Firewall. Specifies which availability zones the Azure Firewall should be deployed across.')
+    availabilityZones: (1 | 2 | 3)[]?
+
+    @description('Optional. Threat Intelligence mode for the Azure Firewall. Controls how the firewall handles threat intelligence.')
+    threatIntelMode: ('Alert' | 'Deny' | 'Off')?
+
+    @description('Optional. Enable/Disable forced tunneling. Only applies when virtualNetworkResourceId is specified.')
+    enableForcedTunneling: bool?
+
+    @description('Optional. Management IP address object for the Azure Firewall. Required when enableForcedTunneling is true.')
+    managementIPAddressObject: {
+      @description('Required. Name of the management public IP address.')
+      name: string
+
+      @description('Required. Allocation method for the management public IP address.')
+      publicIPAllocationMethod: ('Static')
+
+      @description('Required. Resource ID of the public IP prefix.')
+      publicIPPrefixResourceId: string
+
+      @description('Required. SKU name for the management public IP address.')
+      skuName: ('Standard')
+
+      @description('Required. SKU tier for the management public IP address.')
+      skuTier: ('Regional')
+    }?
+
+    @description('Optional. Resource ID of the management public IP address. Required when enableForcedTunneling is true.')
+    managementIPResourceID: string?
+
+    @description('Optional. Minimum number of capacity units for auto-scaling.')
+    autoscaleMinCapacity: int?
+
+    @description('Optional. Maximum number of capacity units for auto-scaling.')
+    autoscaleMaxCapacity: int?
+
+
+
+    @description('Optional. Role assignments for the Azure Firewall.')
+    roleAssignments: {
+      @description('Optional. The name (as GUID) of the role assignment. If not provided, a GUID will be generated.')
+      name: string?
+
+      @description('Required. The role to assign. You can provide either the display name of the role definition, the role definition GUID, or its fully qualified ID.')
+      roleDefinitionIdOrName: string
+
+      @description('Required. The principal ID of the principal (user/group/identity) to assign the role to.')
+      principalId: string
+
+      @description('Optional. The principal type of the assigned principal ID.')
+      principalType: ('ServicePrincipal' | 'Group' | 'User' | 'ForeignGroup' | 'Device')?
+
+      @description('Optional. The description of the role assignment.')
+      description: string?
+
+      @description('Optional. The conditions on the role assignment.')
+      condition: string?
+
+      @description('Optional. Version of the condition.')
+      conditionVersion: '2.0'?
+
+      @description('Optional. The Resource Id of the delegated managed identity resource.')
+      delegatedManagedIdentityResourceId: string?
+    }[]?
 
     // Force-tunneling for Azure Firewall is not currently supported, but is currently being worked and support is expected in the near future; leaving for future use.
     /*
@@ -663,7 +732,7 @@ type virtualHubParameterType = {
     @description('Optional. Diagnostic settings for the Azure Firewall in the Secure Hub.')
     diagnosticSettings: diagnosticSettingFullType[]?
   }?
-  
+
   @description('Optional. SKU for the Virtual Hub.')
   sku: ('Standard' | 'Basic')?
 
