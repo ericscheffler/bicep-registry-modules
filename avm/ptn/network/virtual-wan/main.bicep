@@ -23,7 +23,7 @@ param enableTelemetry bool = true
 @description('Optional. Tags to be applied to all resources.')
 param tags object?
 
-module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.0' = {
+module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.1' = {
   name: '${uniqueString(deployment().name, location)}-${virtualWanParameters.virtualWanName}'
   params: {
     // Required parameters
@@ -97,7 +97,7 @@ module firewallModule 'br/public:avm/res/network/azure-firewall:0.8.0' = [
   }
 ]
 
-module vpnServerConfiguration 'br/public:avm/res/network/vpn-server-configuration:0.1.1' = if (virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration == true) {
+module vpnServerConfiguration 'br/public:avm/res/network/vpn-server-configuration:0.1.2' = if (virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration == true) {
   name: virtualWanParameters.?p2sVpnParameters.p2sVpnServerConfigurationName!
   params: {
     name: virtualWanParameters.?p2sVpnParameters.p2sVpnServerConfigurationName!
@@ -151,7 +151,7 @@ module p2sVpnGatewayModule 'br/public:avm/res/network/p2s-vpn-gateway:0.1.2' = [
   }
 ]
 
-module s2sVpnGatewayModule 'br/public:avm/res/network/vpn-gateway:0.2.1' = [
+module s2sVpnGatewayModule 'br/public:avm/res/network/vpn-gateway:0.2.2' = [
   for (virtualHub, i) in virtualHubParameters!: if (virtualHub.?s2sVpnParameters.?deployS2SVpnGateway == true) {
     name: virtualHub.?s2sVpnParameters.?vpnGatewayName!
     params: {
@@ -243,14 +243,8 @@ import { vpnClientIpsecPoliciesType } from 'br/public:avm/res/network/vpn-server
 @description('Imports the VNet routes static routes type from the P2S VPN gateway module.')
 import { vnetRoutesStaticRoutesType } from 'br/public:avm/res/network/p2s-vpn-gateway:0.1.2'
 
-@description('Imports the Hub Virtual Network Connection type from the Virtual Hub module.')
-import { hubVirtualNetworkConnectionType } from 'br/public:avm/res/network/virtual-hub:0.4.0'
-
-@description('Imports the Routing Intent type from the Virtual Hub module.')
-import { routingIntentType } from 'br/public:avm/res/network/virtual-hub:0.4.0'
-
-@description('Imports the Hub Route Table type from the Virtual Hub module.')
-import { hubRouteTableType } from 'br/public:avm/res/network/virtual-hub:0.4.0'
+@description('Imports all Virtual Hub types from the Virtual Hub module.')
+import * as virtualHubTypes from 'br/public:avm/res/network/virtual-hub:0.4.0'
 
 @description('Imports the full diagnostic setting type from the AVM common types module.')
 import { diagnosticSettingFullType } from 'br/public:avm/utl/types/avm-common-types:0.4.0'
@@ -370,10 +364,10 @@ type virtualHubParameterType = {
   hubRoutingPreference: ('ASPath' | 'ExpressRoute' | 'VpnGateway')?
 
   @description('Optional. The route tables for the Virtual Hub.')
-  hubRouteTables: hubRouteTableType[]?
+  hubRouteTables: virtualHubTypes.hubRouteTableType[]?
 
   @description('Optional. The virtual network connections for the Virtual Hub.')
-  hubVirtualNetworkConnections: hubVirtualNetworkConnectionType[]?
+  hubVirtualNetworkConnections: virtualHubTypes.hubVirtualNetworkConnectionType[]?
 
   @description('Optional. Point-to-site VPN parameters for the Virtual Hub.')
   p2sVpnParameters: {
@@ -572,7 +566,7 @@ type virtualHubParameterType = {
       expressRouteCircuitId: string?
 
       @description('Optional. Routing intent for the connection.')
-      routingIntent: routingIntentType?
+      routingIntent: virtualHubTypes.routingIntentType?
 
       @description('Optional. Enable rate limiting.')
       enableRateLimiting: bool?
@@ -636,7 +630,7 @@ type virtualHubParameterType = {
     additionalPublicIpConfigurationResourceIds: string[]?
 
     @description('Optional. Routing intent for the Azure Firewall.')
-    routingIntent: routingIntentType?
+    routingIntent: virtualHubTypes.routingIntentType?
 
     @description('Optional. Availability zones for the Azure Firewall. Specifies which availability zones the Azure Firewall should be deployed across.')
     availabilityZones: (1 | 2 | 3)[]?

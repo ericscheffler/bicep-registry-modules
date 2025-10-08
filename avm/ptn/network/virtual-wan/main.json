@@ -5,11 +5,10 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.37.4.10188",
-      "templateHash": "4408128856938501355"
+      "version": "0.38.33.27573",
+      "templateHash": "8589389271059731803"
     },
     "name": "Azure Virtual WAN",
-    "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
     "owner": "Azure/module-maintainers",
     "version": "0.1.0"
   },
@@ -321,7 +320,7 @@
         "hubRouteTables": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/hubRouteTableType"
+            "$ref": "#/definitions/_1.hubRouteTableType"
           },
           "nullable": true,
           "metadata": {
@@ -331,7 +330,7 @@
         "hubVirtualNetworkConnections": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/hubVirtualNetworkConnectionType"
+            "$ref": "#/definitions/_1.hubVirtualNetworkConnectionType"
           },
           "nullable": true,
           "metadata": {
@@ -816,13 +815,6 @@
                       "description": "Optional. Connection bandwidth."
                     }
                   },
-                  "enableBgp": {
-                    "type": "bool",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Enable BGP for the connection."
-                    }
-                  },
                   "enableInternetSecurity": {
                     "type": "bool",
                     "nullable": true,
@@ -838,7 +830,7 @@
                     }
                   },
                   "routingIntent": {
-                    "$ref": "#/definitions/routingIntentType",
+                    "$ref": "#/definitions/_1.routingIntentType",
                     "nullable": true,
                     "metadata": {
                       "description": "Optional. Routing intent for the connection."
@@ -997,18 +989,195 @@
             },
             "additionalPublicIpConfigurationResourceIds": {
               "type": "array",
-              "prefixItems": [],
-              "items": false,
+              "items": {
+                "type": "string"
+              },
               "nullable": true,
               "metadata": {
                 "description": "Optional. Additional public IP configuration resource IDs."
               }
             },
             "routingIntent": {
-              "$ref": "#/definitions/routingIntentType",
+              "$ref": "#/definitions/_1.routingIntentType",
               "nullable": true,
               "metadata": {
                 "description": "Optional. Routing intent for the Azure Firewall."
+              }
+            },
+            "availabilityZones": {
+              "type": "array",
+              "allowedValues": [
+                1,
+                2,
+                3
+              ],
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Availability zones for the Azure Firewall. Specifies which availability zones the Azure Firewall should be deployed across."
+              }
+            },
+            "threatIntelMode": {
+              "type": "string",
+              "allowedValues": [
+                "Alert",
+                "Deny",
+                "Off"
+              ],
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Threat Intelligence mode for the Azure Firewall. Controls how the firewall handles threat intelligence."
+              }
+            },
+            "enableForcedTunneling": {
+              "type": "bool",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Enable/Disable forced tunneling. Only applies when virtualNetworkResourceId is specified."
+              }
+            },
+            "managementIPAddressObject": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "metadata": {
+                    "description": "Required. Name of the management public IP address."
+                  }
+                },
+                "publicIPAllocationMethod": {
+                  "type": "string",
+                  "allowedValues": [
+                    "Static"
+                  ],
+                  "metadata": {
+                    "description": "Required. Allocation method for the management public IP address."
+                  }
+                },
+                "publicIPPrefixResourceId": {
+                  "type": "string",
+                  "metadata": {
+                    "description": "Required. Resource ID of the public IP prefix."
+                  }
+                },
+                "skuName": {
+                  "type": "string",
+                  "allowedValues": [
+                    "Standard"
+                  ],
+                  "metadata": {
+                    "description": "Required. SKU name for the management public IP address."
+                  }
+                },
+                "skuTier": {
+                  "type": "string",
+                  "allowedValues": [
+                    "Regional"
+                  ],
+                  "metadata": {
+                    "description": "Required. SKU tier for the management public IP address."
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Management IP address object for the Azure Firewall. Required when enableForcedTunneling is true."
+              }
+            },
+            "managementIPResourceID": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Resource ID of the management public IP address. Required when enableForcedTunneling is true."
+              }
+            },
+            "autoscaleMinCapacity": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Minimum number of capacity units for auto-scaling."
+              }
+            },
+            "autoscaleMaxCapacity": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Maximum number of capacity units for auto-scaling."
+              }
+            },
+            "roleAssignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. The name (as GUID) of the role assignment. If not provided, a GUID will be generated."
+                    }
+                  },
+                  "roleDefinitionIdOrName": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. The role to assign. You can provide either the display name of the role definition, the role definition GUID, or its fully qualified ID."
+                    }
+                  },
+                  "principalId": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. The principal ID of the principal (user/group/identity) to assign the role to."
+                    }
+                  },
+                  "principalType": {
+                    "type": "string",
+                    "allowedValues": [
+                      "Device",
+                      "ForeignGroup",
+                      "Group",
+                      "ServicePrincipal",
+                      "User"
+                    ],
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. The principal type of the assigned principal ID."
+                    }
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. The description of the role assignment."
+                    }
+                  },
+                  "condition": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. The conditions on the role assignment."
+                    }
+                  },
+                  "conditionVersion": {
+                    "type": "string",
+                    "allowedValues": [
+                      "2.0"
+                    ],
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Version of the condition."
+                    }
+                  },
+                  "delegatedManagedIdentityResourceId": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. The Resource Id of the delegated managed identity resource."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Role assignments for the Azure Firewall."
               }
             },
             "diagnosticSettings": {
@@ -1058,6 +1227,143 @@
           "metadata": {
             "description": "Optional. IP addresses for the Virtual Router."
           }
+        }
+      }
+    },
+    "_1.hubRouteTableType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. The route table name."
+          }
+        },
+        "labels": {
+          "type": "array",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. List of labels associated with this route table."
+          }
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "destinations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "description": "Required. The address prefix for the route."
+                }
+              },
+              "destinationType": {
+                "type": "string",
+                "allowedValues": [
+                  "CIDR"
+                ],
+                "metadata": {
+                  "description": "Required. The destination type for the route."
+                }
+              },
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. The name of the route."
+                }
+              },
+              "nextHopType": {
+                "type": "string",
+                "allowedValues": [
+                  "ResourceId"
+                ],
+                "metadata": {
+                  "description": "Required. The next hop type for the route."
+                }
+              },
+              "nextHop": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. The next hop IP address for the route."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. List of all routes."
+          }
+        }
+      },
+      "metadata": {
+        "description": "The type of a virtual hub route table.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.0"
+        }
+      }
+    },
+    "_1.hubVirtualNetworkConnectionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. The connection name."
+          }
+        },
+        "enableInternetSecurity": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable internet security."
+          }
+        },
+        "remoteVirtualNetworkResourceId": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Resource ID of the virtual network to link to."
+          }
+        },
+        "routingConfiguration": {
+          "type": "object",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Routing Configuration indicating the associated and propagated route tables for this connection."
+          }
+        }
+      },
+      "metadata": {
+        "description": "The type of a hub virtual network connection.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.0"
+        }
+      }
+    },
+    "_1.routingIntentType": {
+      "type": "object",
+      "properties": {
+        "privateToFirewall": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Configures Routing Intent to forward Private traffic to the firewall (RFC1918)."
+          }
+        },
+        "internetToFirewall": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Configures Routing Intent to Forward Internet traffic to the firewall (0.0.0.0/0)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "The type of a routing intent.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.0"
         }
       }
     },
@@ -1183,118 +1489,6 @@
         }
       }
     },
-    "hubRouteTableType": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "metadata": {
-            "description": "Required. The route table name."
-          }
-        },
-        "labels": {
-          "type": "array",
-          "nullable": true,
-          "metadata": {
-            "description": "Optional. List of labels associated with this route table."
-          }
-        },
-        "routes": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "destinations": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "metadata": {
-                  "description": "Required. The address prefix for the route."
-                }
-              },
-              "destinationType": {
-                "type": "string",
-                "allowedValues": [
-                  "CIDR"
-                ],
-                "metadata": {
-                  "description": "Required. The destination type for the route."
-                }
-              },
-              "name": {
-                "type": "string",
-                "metadata": {
-                  "description": "Required. The name of the route."
-                }
-              },
-              "nextHopType": {
-                "type": "string",
-                "allowedValues": [
-                  "ResourceId"
-                ],
-                "metadata": {
-                  "description": "Required. The next hop type for the route."
-                }
-              },
-              "nextHop": {
-                "type": "string",
-                "metadata": {
-                  "description": "Required. The next hop IP address for the route."
-                }
-              }
-            }
-          },
-          "nullable": true,
-          "metadata": {
-            "description": "Optional. List of all routes."
-          }
-        }
-      },
-      "metadata": {
-        "description": "The type of a virtual hub route table.",
-        "__bicep_imported_from!": {
-          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.0"
-        }
-      }
-    },
-    "hubVirtualNetworkConnectionType": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "metadata": {
-            "description": "Required. The connection name."
-          }
-        },
-        "enableInternetSecurity": {
-          "type": "bool",
-          "nullable": true,
-          "metadata": {
-            "description": "Optional. Enable internet security."
-          }
-        },
-        "remoteVirtualNetworkResourceId": {
-          "type": "string",
-          "metadata": {
-            "description": "Required. Resource ID of the virtual network to link to."
-          }
-        },
-        "routingConfiguration": {
-          "type": "object",
-          "nullable": true,
-          "metadata": {
-            "description": "Optional. Routing Configuration indicating the associated and propagated route tables for this connection."
-          }
-        }
-      },
-      "metadata": {
-        "description": "The type of a hub virtual network connection.",
-        "__bicep_imported_from!": {
-          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.0"
-        }
-      }
-    },
     "lockType": {
       "type": "object",
       "properties": {
@@ -1329,31 +1523,6 @@
         "description": "An AVM-aligned type for a lock.",
         "__bicep_imported_from!": {
           "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.6.0"
-        }
-      }
-    },
-    "routingIntentType": {
-      "type": "object",
-      "properties": {
-        "privateToFirewall": {
-          "type": "bool",
-          "nullable": true,
-          "metadata": {
-            "description": "Optional. Configures Routing Intent to forward Private traffic to the firewall (RFC1918)."
-          }
-        },
-        "internetToFirewall": {
-          "type": "bool",
-          "nullable": true,
-          "metadata": {
-            "description": "Optional. Configures Routing Intent to Forward Internet traffic to the firewall (0.0.0.0/0)."
-          }
-        }
-      },
-      "metadata": {
-        "description": "The type of a routing intent.",
-        "__bicep_imported_from!": {
-          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.0"
         }
       }
     },
@@ -1555,7 +1724,7 @@
     },
     "virtualWan": {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}-{1}', uniqueString(deployment().name, parameters('location')), parameters('virtualWanParameters').virtualWanName)]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1595,8 +1764,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.36.1.42791",
-              "templateHash": "17702143876780900687"
+              "version": "0.38.5.1644",
+              "templateHash": "13742277943651977632"
             },
             "name": "Virtual WANs",
             "description": "This module deploys a Virtual WAN."
@@ -1623,12 +1792,19 @@
                   "metadata": {
                     "description": "Optional. Specify the type of lock."
                   }
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "Optional. Specify the notes of the lock."
+                  }
                 }
               },
               "metadata": {
                 "description": "An AVM-aligned type for a lock.",
                 "__bicep_imported_from!": {
-                  "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.5.1"
+                  "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.6.0"
                 }
               }
             },
@@ -1752,10 +1928,13 @@
             },
             "tags": {
               "type": "object",
-              "nullable": true,
               "metadata": {
+                "__bicep_resource_derived_type!": {
+                  "source": "Microsoft.Network/virtualWans@2024-07-01#properties/tags"
+                },
                 "description": "Optional. Tags of the resource."
-              }
+              },
+              "nullable": true
             },
             "enableTelemetry": {
               "type": "bool",
@@ -1794,7 +1973,7 @@
               "condition": "[parameters('enableTelemetry')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "[format('46d3xbcp.res.network-virtualwan.{0}.{1}', replace('0.4.0', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
+              "name": "[format('46d3xbcp.res.network-virtualwan.{0}.{1}', replace('0.4.1', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
               "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -1829,7 +2008,7 @@
               "name": "[coalesce(tryGet(parameters('lock'), 'name'), format('lock-{0}', parameters('name')))]",
               "properties": {
                 "level": "[coalesce(tryGet(parameters('lock'), 'kind'), '')]",
-                "notes": "[if(equals(tryGet(parameters('lock'), 'kind'), 'CanNotDelete'), 'Cannot delete resource or child resources.', 'Cannot delete or modify the resource or child resources.')]"
+                "notes": "[coalesce(tryGet(parameters('lock'), 'notes'), if(equals(tryGet(parameters('lock'), 'kind'), 'CanNotDelete'), 'Cannot delete resource or child resources.', 'Cannot delete or modify the resource or child resources.'))]"
               },
               "dependsOn": [
                 "virtualWan"
@@ -1897,7 +2076,7 @@
         "count": "[length(parameters('virtualHubParameters'))]"
       },
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}-{1}', uniqueString(deployment().name, parameters('location')), parameters('virtualHubParameters')[copyIndex()].hubName)]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2792,7 +2971,7 @@
       },
       "condition": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'deploySecureHub')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'azureFirewallName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2830,6 +3009,30 @@
           },
           "additionalPublicIpConfigurations": {
             "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'additionalPublicIpConfigurationResourceIds')]"
+          },
+          "availabilityZones": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'availabilityZones')]"
+          },
+          "threatIntelMode": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'threatIntelMode')]"
+          },
+          "enableForcedTunneling": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'enableForcedTunneling')]"
+          },
+          "managementIPAddressObject": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'managementIPAddressObject')]"
+          },
+          "managementIPResourceID": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'managementIPResourceID')]"
+          },
+          "autoscaleMinCapacity": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'autoscaleMinCapacity')]"
+          },
+          "autoscaleMaxCapacity": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'autoscaleMaxCapacity')]"
+          },
+          "roleAssignments": {
+            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'roleAssignments')]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
@@ -5426,7 +5629,7 @@
     "vpnServerConfiguration": {
       "condition": "[equals(tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'createP2sVpnServerConfiguration'), true())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters', 'p2sVpnServerConfigurationName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -5501,8 +5704,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.33.13.18514",
-              "templateHash": "13533570582897020060"
+              "version": "0.38.5.1644",
+              "templateHash": "5981686554871207613"
             },
             "name": "VPN Server Configuration",
             "description": "This module deploys a VPN Server Configuration for a Virtual Hub P2S Gateway."
@@ -5593,12 +5796,19 @@
                   "metadata": {
                     "description": "Optional. Specify the type of lock."
                   }
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "Optional. Specify the notes of the lock."
+                  }
                 }
               },
               "metadata": {
                 "description": "An AVM-aligned type for a lock.",
                 "__bicep_imported_from!": {
-                  "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.5.1"
+                  "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.6.0"
                 }
               }
             }
@@ -5729,10 +5939,13 @@
             },
             "tags": {
               "type": "object",
-              "nullable": true,
               "metadata": {
+                "__bicep_resource_derived_type!": {
+                  "source": "Microsoft.Network/vpnServerConfigurations@2023-11-01#properties/tags"
+                },
                 "description": "Optional. Tags of the resource."
-              }
+              },
+              "nullable": true
             },
             "lock": {
               "$ref": "#/definitions/lockType",
@@ -5754,7 +5967,7 @@
               "condition": "[parameters('enableTelemetry')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2024-03-01",
-              "name": "[take(format('46d3xbcp.res.network-vpnserverconfiguration.{0}.{1}', replace('0.1.1', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
+              "name": "[take(format('46d3xbcp.res.network-vpnserverconfiguration.{0}.{1}', replace('0.1.2', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
               "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -5865,7 +6078,7 @@
               "name": "[coalesce(tryGet(parameters('lock'), 'name'), format('lock-{0}', parameters('name')))]",
               "properties": {
                 "level": "[coalesce(tryGet(parameters('lock'), 'kind'), '')]",
-                "notes": "[if(equals(tryGet(parameters('lock'), 'kind'), 'CanNotDelete'), 'Cannot delete resource or child resources.', 'Cannot delete or modify the resource or child resources.')]"
+                "notes": "[coalesce(tryGet(parameters('lock'), 'notes'), if(equals(tryGet(parameters('lock'), 'kind'), 'CanNotDelete'), 'Cannot delete resource or child resources.', 'Cannot delete or modify the resource or child resources.'))]"
               },
               "dependsOn": [
                 "vpnServerConfig"
@@ -5915,7 +6128,7 @@
       },
       "condition": "[equals(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'deployP2SVpnGateway'), true())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vpnGatewayName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -6363,7 +6576,7 @@
       },
       "condition": "[equals(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'deployS2SVpnGateway'), true())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'vpnGatewayName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -6415,8 +6628,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.36.1.42791",
-              "templateHash": "6352606905449698216"
+              "version": "0.38.5.1644",
+              "templateHash": "324435696057848619"
             },
             "name": "VPN Gateways",
             "description": "This module deploys a VPN Gateway."
@@ -6937,12 +7150,19 @@
                   "metadata": {
                     "description": "Optional. Specify the type of lock."
                   }
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "Optional. Specify the notes of the lock."
+                  }
                 }
               },
               "metadata": {
                 "description": "An AVM-aligned type for a lock.",
                 "__bicep_imported_from!": {
-                  "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.5.1"
+                  "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.6.1"
                 }
               }
             },
@@ -7292,7 +7512,7 @@
               "condition": "[parameters('enableTelemetry')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2024-03-01",
-              "name": "[take(format('46d3xbcp.res.network-vpngateway.{0}.{1}', replace('0.2.1', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
+              "name": "[take(format('46d3xbcp.res.network-vpngateway.{0}.{1}', replace('0.2.2', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
               "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -7332,7 +7552,7 @@
               "name": "[coalesce(tryGet(parameters('lock'), 'name'), format('lock-{0}', parameters('name')))]",
               "properties": {
                 "level": "[coalesce(tryGet(parameters('lock'), 'kind'), '')]",
-                "notes": "[if(equals(tryGet(parameters('lock'), 'kind'), 'CanNotDelete'), 'Cannot delete resource or child resources.', 'Cannot delete or modify the resource or child resources.')]"
+                "notes": "[coalesce(tryGet(parameters('lock'), 'notes'), if(equals(tryGet(parameters('lock'), 'kind'), 'CanNotDelete'), 'Cannot delete resource or child resources.', 'Cannot delete or modify the resource or child resources.'))]"
               },
               "dependsOn": [
                 "vpnGateway"
@@ -7344,7 +7564,7 @@
                 "count": "[length(parameters('natRules'))]"
               },
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2022-09-01",
+              "apiVersion": "2025-04-01",
               "name": "[format('{0}-NATRule-{1}', deployment().name, copyIndex())]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -7381,8 +7601,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.36.1.42791",
-                      "templateHash": "2314597227337579115"
+                      "version": "0.38.5.1644",
+                      "templateHash": "288341564823488659"
                     },
                     "name": "VPN Gateway NAT Rules",
                     "description": "This module deploys a VPN Gateway NAT Rule."
@@ -7529,7 +7749,7 @@
                 "count": "[length(parameters('vpnConnections'))]"
               },
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2022-09-01",
+              "apiVersion": "2025-04-01",
               "name": "[format('{0}-Connection-{1}', deployment().name, copyIndex())]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -7593,8 +7813,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.36.1.42791",
-                      "templateHash": "18029990054977283779"
+                      "version": "0.38.5.1644",
+                      "templateHash": "4258875418296204842"
                     },
                     "name": "VPN Gateway VPN Connections",
                     "description": "This module deploys a VPN Gateway VPN Connection."
@@ -8306,7 +8526,7 @@
       },
       "condition": "[equals(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'deployExpressRouteGateway'), true())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'expressRouteGatewayName')]",
       "properties": {
         "expressionEvaluationOptions": {

@@ -1,6 +1,5 @@
 # Azure Virtual WAN `[Network/VirtualWan]`
 
-This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.
 
 ## Navigation
 
@@ -237,12 +236,25 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
         hubLocation: '<hubLocation>'
         hubName: '<hubName>'
         hubRoutingPreference: 'VpnGateway'
+        hubVirtualNetworkConnections: [
+          {
+            enableInternetSecurity: true
+            name: '<name>'
+            remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+          }
+          {
+            enableInternetSecurity: true
+            name: '<name>'
+            remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+          }
+        ]
         p2sVpnParameters: {
           connectionConfigurationsName: 'default'
           deployP2SVpnGateway: true
           vpnClientAddressPoolAddressPrefixes: [
             '192.168.1.0/24'
           ]
+          vpnGatewayAssociatedRouteTable: 'defaultRouteTable'
           vpnGatewayName: 'dep-p2s-gw-nvwanmax'
           vpnGatewayScaleUnit: 1
         }
@@ -252,13 +264,34 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
           vpnGatewayScaleUnit: 1
         }
         secureHubParameters: {
-          azureFirewallName: 'unused'
-          azureFirewallPublicIPCount: 1
-          azureFirewallSku: 'Standard'
-          deploySecureHub: false
+          autoscaleMaxCapacity: 10
+          autoscaleMinCapacity: 2
+          availabilityZones: [
+            1
+            2
+            3
+          ]
+          azureFirewallName: 'dep-fw-nvwanmax'
+          azureFirewallPublicIPCount: 2
+          azureFirewallSku: 'Premium'
+          deploySecureHub: true
+          firewallPolicyResourceId: '<firewallPolicyResourceId>'
+          publicIPAddressObject: {
+            name: 'dep-fw-pip-nvwanmax'
+            publicIPAllocationMethod: 'Static'
+            publicIPPrefixResourceId: '<publicIPPrefixResourceId>'
+            skuName: 'Standard'
+            skuTier: 'Regional'
+          }
+          routingIntent: {
+            internetToFirewall: true
+            privateToFirewall: true
+          }
+          threatIntelMode: 'Alert'
         }
         tags: {
-          HubType: 'Transit'
+          FirewallEnabled: 'true'
+          HubType: 'Secure'
         }
       }
     ]
@@ -266,8 +299,8 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
       allowBranchToBranchTraffic: true
       location: '<location>'
       p2sVpnParameters: {
-        aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-        aadIssuer: 'https://sts.windows.net/tenant-id/'
+        aadAudience: '11111111-1234-4321-1234-111111111111'
+        aadIssuer: 'https://sts.windows.net/11111111-1111-1111-1111-111111111111/'
         aadTenant: '<aadTenant>'
         createP2sVpnServerConfiguration: true
         p2sVpnServerConfigurationName: 'dep-p2s-nvwanmax'
@@ -280,13 +313,13 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
         Environment: 'Test'
       }
       type: 'Standard'
-      virtualWanName: 'dep-vw-nvwanmax'
+      virtualWanName: 'dep-vwan-nvwanmax'
     }
     // Non-required parameters
     tags: {
-      Environment: 'Test'
+      Environment: 'Non-Prod'
       'hidden-title': 'This is visible in the resource name'
-      Purpose: 'Maximum functionality test'
+      Role: 'DeploymentValidation'
     }
   }
 }
@@ -317,12 +350,25 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
           "hubLocation": "<hubLocation>",
           "hubName": "<hubName>",
           "hubRoutingPreference": "VpnGateway",
+          "hubVirtualNetworkConnections": [
+            {
+              "enableInternetSecurity": true,
+              "name": "<name>",
+              "remoteVirtualNetworkResourceId": "<remoteVirtualNetworkResourceId>"
+            },
+            {
+              "enableInternetSecurity": true,
+              "name": "<name>",
+              "remoteVirtualNetworkResourceId": "<remoteVirtualNetworkResourceId>"
+            }
+          ],
           "p2sVpnParameters": {
             "connectionConfigurationsName": "default",
             "deployP2SVpnGateway": true,
             "vpnClientAddressPoolAddressPrefixes": [
               "192.168.1.0/24"
             ],
+            "vpnGatewayAssociatedRouteTable": "defaultRouteTable",
             "vpnGatewayName": "dep-p2s-gw-nvwanmax",
             "vpnGatewayScaleUnit": 1
           },
@@ -332,13 +378,34 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
             "vpnGatewayScaleUnit": 1
           },
           "secureHubParameters": {
-            "azureFirewallName": "unused",
-            "azureFirewallPublicIPCount": 1,
-            "azureFirewallSku": "Standard",
-            "deploySecureHub": false
+            "autoscaleMaxCapacity": 10,
+            "autoscaleMinCapacity": 2,
+            "availabilityZones": [
+              1,
+              2,
+              3
+            ],
+            "azureFirewallName": "dep-fw-nvwanmax",
+            "azureFirewallPublicIPCount": 2,
+            "azureFirewallSku": "Premium",
+            "deploySecureHub": true,
+            "firewallPolicyResourceId": "<firewallPolicyResourceId>",
+            "publicIPAddressObject": {
+              "name": "dep-fw-pip-nvwanmax",
+              "publicIPAllocationMethod": "Static",
+              "publicIPPrefixResourceId": "<publicIPPrefixResourceId>",
+              "skuName": "Standard",
+              "skuTier": "Regional"
+            },
+            "routingIntent": {
+              "internetToFirewall": true,
+              "privateToFirewall": true
+            },
+            "threatIntelMode": "Alert"
           },
           "tags": {
-            "HubType": "Transit"
+            "FirewallEnabled": "true",
+            "HubType": "Secure"
           }
         }
       ]
@@ -348,8 +415,8 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
         "allowBranchToBranchTraffic": true,
         "location": "<location>",
         "p2sVpnParameters": {
-          "aadAudience": "41b23e61-6c1e-4545-b367-cd054e0ed4b4",
-          "aadIssuer": "https://sts.windows.net/tenant-id/",
+          "aadAudience": "11111111-1234-4321-1234-111111111111",
+          "aadIssuer": "https://sts.windows.net/11111111-1111-1111-1111-111111111111/",
           "aadTenant": "<aadTenant>",
           "createP2sVpnServerConfiguration": true,
           "p2sVpnServerConfigurationName": "dep-p2s-nvwanmax",
@@ -362,15 +429,15 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
           "Environment": "Test"
         },
         "type": "Standard",
-        "virtualWanName": "dep-vw-nvwanmax"
+        "virtualWanName": "dep-vwan-nvwanmax"
       }
     },
     // Non-required parameters
     "tags": {
       "value": {
-        "Environment": "Test",
+        "Environment": "Non-Prod",
         "hidden-title": "This is visible in the resource name",
-        "Purpose": "Maximum functionality test"
+        "Role": "DeploymentValidation"
       }
     }
   }
@@ -399,12 +466,25 @@ param virtualHubParameters = [
     hubLocation: '<hubLocation>'
     hubName: '<hubName>'
     hubRoutingPreference: 'VpnGateway'
+    hubVirtualNetworkConnections: [
+      {
+        enableInternetSecurity: true
+        name: '<name>'
+        remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+      }
+      {
+        enableInternetSecurity: true
+        name: '<name>'
+        remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+      }
+    ]
     p2sVpnParameters: {
       connectionConfigurationsName: 'default'
       deployP2SVpnGateway: true
       vpnClientAddressPoolAddressPrefixes: [
         '192.168.1.0/24'
       ]
+      vpnGatewayAssociatedRouteTable: 'defaultRouteTable'
       vpnGatewayName: 'dep-p2s-gw-nvwanmax'
       vpnGatewayScaleUnit: 1
     }
@@ -414,13 +494,34 @@ param virtualHubParameters = [
       vpnGatewayScaleUnit: 1
     }
     secureHubParameters: {
-      azureFirewallName: 'unused'
-      azureFirewallPublicIPCount: 1
-      azureFirewallSku: 'Standard'
-      deploySecureHub: false
+      autoscaleMaxCapacity: 10
+      autoscaleMinCapacity: 2
+      availabilityZones: [
+        1
+        2
+        3
+      ]
+      azureFirewallName: 'dep-fw-nvwanmax'
+      azureFirewallPublicIPCount: 2
+      azureFirewallSku: 'Premium'
+      deploySecureHub: true
+      firewallPolicyResourceId: '<firewallPolicyResourceId>'
+      publicIPAddressObject: {
+        name: 'dep-fw-pip-nvwanmax'
+        publicIPAllocationMethod: 'Static'
+        publicIPPrefixResourceId: '<publicIPPrefixResourceId>'
+        skuName: 'Standard'
+        skuTier: 'Regional'
+      }
+      routingIntent: {
+        internetToFirewall: true
+        privateToFirewall: true
+      }
+      threatIntelMode: 'Alert'
     }
     tags: {
-      HubType: 'Transit'
+      FirewallEnabled: 'true'
+      HubType: 'Secure'
     }
   }
 ]
@@ -428,8 +529,8 @@ param virtualWanParameters = {
   allowBranchToBranchTraffic: true
   location: '<location>'
   p2sVpnParameters: {
-    aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-    aadIssuer: 'https://sts.windows.net/tenant-id/'
+    aadAudience: '11111111-1234-4321-1234-111111111111'
+    aadIssuer: 'https://sts.windows.net/11111111-1111-1111-1111-111111111111/'
     aadTenant: '<aadTenant>'
     createP2sVpnServerConfiguration: true
     p2sVpnServerConfigurationName: 'dep-p2s-nvwanmax'
@@ -442,13 +543,13 @@ param virtualWanParameters = {
     Environment: 'Test'
   }
   type: 'Standard'
-  virtualWanName: 'dep-vw-nvwanmax'
+  virtualWanName: 'dep-vwan-nvwanmax'
 }
 // Non-required parameters
 param tags = {
-  Environment: 'Test'
+  Environment: 'Non-Prod'
   'hidden-title': 'This is visible in the resource name'
-  Purpose: 'Maximum functionality test'
+  Role: 'DeploymentValidation'
 }
 ```
 
@@ -1486,7 +1587,6 @@ ExpressRoute connections.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`connectionBandwidth`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsconnectionbandwidth) | int | Connection bandwidth. |
-| [`enableBgp`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsenablebgp) | bool | Enable BGP for the connection. |
 | [`enableInternetSecurity`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsenableinternetsecurity) | bool | Enable internet security for the connection. |
 | [`enableRateLimiting`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsenableratelimiting) | bool | Enable rate limiting. |
 | [`expressRouteCircuitId`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsexpressroutecircuitid) | string | Resource ID of the ExpressRoute circuit. |
@@ -1522,13 +1622,6 @@ Connection bandwidth.
 
 - Required: No
 - Type: int
-
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.enableBgp`
-
-Enable BGP for the connection.
-
-- Required: No
-- Type: bool
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.enableInternetSecurity`
 
@@ -2419,11 +2512,19 @@ Secure Hub parameters for the Virtual Hub.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`additionalPublicIpConfigurationResourceIds`](#parameter-virtualhubparameterssecurehubparametersadditionalpublicipconfigurationresourceids) | array | Additional public IP configuration resource IDs. |
+| [`autoscaleMaxCapacity`](#parameter-virtualhubparameterssecurehubparametersautoscalemaxcapacity) | int | Maximum number of capacity units for auto-scaling. |
+| [`autoscaleMinCapacity`](#parameter-virtualhubparameterssecurehubparametersautoscalemincapacity) | int | Minimum number of capacity units for auto-scaling. |
+| [`availabilityZones`](#parameter-virtualhubparameterssecurehubparametersavailabilityzones) | array | Availability zones for the Azure Firewall. Specifies which availability zones the Azure Firewall should be deployed across. |
 | [`diagnosticSettings`](#parameter-virtualhubparameterssecurehubparametersdiagnosticsettings) | array | Diagnostic settings for the Azure Firewall in the Secure Hub. |
+| [`enableForcedTunneling`](#parameter-virtualhubparameterssecurehubparametersenableforcedtunneling) | bool | Enable/Disable forced tunneling. Only applies when virtualNetworkResourceId is specified. |
 | [`firewallPolicyResourceId`](#parameter-virtualhubparameterssecurehubparametersfirewallpolicyresourceid) | string | Resource ID of the firewall policy. |
+| [`managementIPAddressObject`](#parameter-virtualhubparameterssecurehubparametersmanagementipaddressobject) | object | Management IP address object for the Azure Firewall. Required when enableForcedTunneling is true. |
+| [`managementIPResourceID`](#parameter-virtualhubparameterssecurehubparametersmanagementipresourceid) | string | Resource ID of the management public IP address. Required when enableForcedTunneling is true. |
 | [`publicIPAddressObject`](#parameter-virtualhubparameterssecurehubparameterspublicipaddressobject) | object | Public IP address object for the Azure Firewall. |
 | [`publicIPResourceID`](#parameter-virtualhubparameterssecurehubparameterspublicipresourceid) | string | Resource ID of the public IP address. |
+| [`roleAssignments`](#parameter-virtualhubparameterssecurehubparametersroleassignments) | array | Role assignments for the Azure Firewall. |
 | [`routingIntent`](#parameter-virtualhubparameterssecurehubparametersroutingintent) | object | Routing intent for the Azure Firewall. |
+| [`threatIntelMode`](#parameter-virtualhubparameterssecurehubparametersthreatintelmode) | string | Threat Intelligence mode for the Azure Firewall. Controls how the firewall handles threat intelligence. |
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
 
@@ -2467,6 +2568,35 @@ Additional public IP configuration resource IDs.
 
 - Required: No
 - Type: array
+
+### Parameter: `virtualHubParameters.secureHubParameters.autoscaleMaxCapacity`
+
+Maximum number of capacity units for auto-scaling.
+
+- Required: No
+- Type: int
+
+### Parameter: `virtualHubParameters.secureHubParameters.autoscaleMinCapacity`
+
+Minimum number of capacity units for auto-scaling.
+
+- Required: No
+- Type: int
+
+### Parameter: `virtualHubParameters.secureHubParameters.availabilityZones`
+
+Availability zones for the Azure Firewall. Specifies which availability zones the Azure Firewall should be deployed across.
+
+- Required: No
+- Type: array
+- Allowed:
+  ```Bicep
+  [
+    1
+    2
+    3
+  ]
+  ```
 
 ### Parameter: `virtualHubParameters.secureHubParameters.diagnosticSettings`
 
@@ -2614,9 +2744,93 @@ Resource ID of the diagnostic log analytics workspace. For security reasons, it 
 - Required: No
 - Type: string
 
+### Parameter: `virtualHubParameters.secureHubParameters.enableForcedTunneling`
+
+Enable/Disable forced tunneling. Only applies when virtualNetworkResourceId is specified.
+
+- Required: No
+- Type: bool
+
 ### Parameter: `virtualHubParameters.secureHubParameters.firewallPolicyResourceId`
 
 Resource ID of the firewall policy.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPAddressObject`
+
+Management IP address object for the Azure Firewall. Required when enableForcedTunneling is true.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`name`](#parameter-virtualhubparameterssecurehubparametersmanagementipaddressobjectname) | string | Name of the management public IP address. |
+| [`publicIPAllocationMethod`](#parameter-virtualhubparameterssecurehubparametersmanagementipaddressobjectpublicipallocationmethod) | string | Allocation method for the management public IP address. |
+| [`publicIPPrefixResourceId`](#parameter-virtualhubparameterssecurehubparametersmanagementipaddressobjectpublicipprefixresourceid) | string | Resource ID of the public IP prefix. |
+| [`skuName`](#parameter-virtualhubparameterssecurehubparametersmanagementipaddressobjectskuname) | string | SKU name for the management public IP address. |
+| [`skuTier`](#parameter-virtualhubparameterssecurehubparametersmanagementipaddressobjectskutier) | string | SKU tier for the management public IP address. |
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPAddressObject.name`
+
+Name of the management public IP address.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPAddressObject.publicIPAllocationMethod`
+
+Allocation method for the management public IP address.
+
+- Required: Yes
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Static'
+  ]
+  ```
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPAddressObject.publicIPPrefixResourceId`
+
+Resource ID of the public IP prefix.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPAddressObject.skuName`
+
+SKU name for the management public IP address.
+
+- Required: Yes
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Standard'
+  ]
+  ```
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPAddressObject.skuTier`
+
+SKU tier for the management public IP address.
+
+- Required: Yes
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Regional'
+  ]
+  ```
+
+### Parameter: `virtualHubParameters.secureHubParameters.managementIPResourceID`
+
+Resource ID of the management public IP address. Required when enableForcedTunneling is true.
 
 - Required: No
 - Type: string
@@ -2698,6 +2912,103 @@ Resource ID of the public IP address.
 - Required: No
 - Type: string
 
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments`
+
+Role assignments for the Azure Firewall.
+
+- Required: No
+- Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`principalId`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsprincipalid) | string | The principal ID of the principal (user/group/identity) to assign the role to. |
+| [`roleDefinitionIdOrName`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsroledefinitionidorname) | string | The role to assign. You can provide either the display name of the role definition, the role definition GUID, or its fully qualified ID. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`condition`](#parameter-virtualhubparameterssecurehubparametersroleassignmentscondition) | string | The conditions on the role assignment. |
+| [`conditionVersion`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsconditionversion) | string | Version of the condition. |
+| [`delegatedManagedIdentityResourceId`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsdelegatedmanagedidentityresourceid) | string | The Resource Id of the delegated managed identity resource. |
+| [`description`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsdescription) | string | The description of the role assignment. |
+| [`name`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsname) | string | The name (as GUID) of the role assignment. If not provided, a GUID will be generated. |
+| [`principalType`](#parameter-virtualhubparameterssecurehubparametersroleassignmentsprincipaltype) | string | The principal type of the assigned principal ID. |
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.principalId`
+
+The principal ID of the principal (user/group/identity) to assign the role to.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.roleDefinitionIdOrName`
+
+The role to assign. You can provide either the display name of the role definition, the role definition GUID, or its fully qualified ID.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.condition`
+
+The conditions on the role assignment.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.conditionVersion`
+
+Version of the condition.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    '2.0'
+  ]
+  ```
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.delegatedManagedIdentityResourceId`
+
+The Resource Id of the delegated managed identity resource.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.description`
+
+The description of the role assignment.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.name`
+
+The name (as GUID) of the role assignment. If not provided, a GUID will be generated.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.secureHubParameters.roleAssignments.principalType`
+
+The principal type of the assigned principal ID.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Device'
+    'ForeignGroup'
+    'Group'
+    'ServicePrincipal'
+    'User'
+  ]
+  ```
+
 ### Parameter: `virtualHubParameters.secureHubParameters.routingIntent`
 
 Routing intent for the Azure Firewall.
@@ -2725,6 +3036,21 @@ Configures Routing Intent to forward Private traffic to the firewall (RFC1918).
 
 - Required: No
 - Type: bool
+
+### Parameter: `virtualHubParameters.secureHubParameters.threatIntelMode`
+
+Threat Intelligence mode for the Azure Firewall. Controls how the firewall handles threat intelligence.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Alert'
+    'Deny'
+    'Off'
+  ]
+  ```
 
 ### Parameter: `virtualHubParameters.sku`
 
