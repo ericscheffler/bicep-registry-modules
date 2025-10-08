@@ -1,5 +1,5 @@
 metadata name = 'Azure Virtual WAN'
-
+metadata description = 'This pattern module deploys Azure Virtual WAN with Virtual Hubs and associated networking components including VPN gateways, ExpressRoute gateways, and Azure Firewall for secure hub configurations.'
 
 metadata owner = 'Azure/module-maintainers'
 metadata version = '0.1.0'

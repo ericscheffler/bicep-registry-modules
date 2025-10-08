@@ -6,9 +6,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "8589389271059731803"
+      "templateHash": "3562496957287767971"
     },
     "name": "Azure Virtual WAN",
+    "description": "This pattern module deploys Azure Virtual WAN with Virtual Hubs and associated networking components including VPN gateways, ExpressRoute gateways, and Azure Firewall for secure hub configurations.",
     "owner": "Azure/module-maintainers",
     "version": "0.1.0"
   },

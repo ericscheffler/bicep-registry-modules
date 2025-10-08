@@ -1,5 +1,6 @@
 # Azure Virtual WAN `[Network/VirtualWan]`
 
+This pattern module deploys Azure Virtual WAN with Virtual Hubs and associated networking components including VPN gateways, ExpressRoute gateways, and Azure Firewall for secure hub configurations.
 
 ## Navigation
 
