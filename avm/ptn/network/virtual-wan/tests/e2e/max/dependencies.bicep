@@ -16,9 +16,6 @@ param virtualNetwork2Location string
 @description('Required. The name of the public IP prefix for Azure Firewall.')
 param publicIPPrefixName string
 
-@description('Required. The name of the managed identity.')
-param managedIdentityName string
-
 resource azureFirewallPolicy 'Microsoft.Network/firewallPolicies@2024-07-01' = {
   name: azureFirewallPolicyName
   location: resourceGroup().location
@@ -75,11 +72,6 @@ resource vnet2 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   }
 }
 
-resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = {
-  name: managedIdentityName
-  location: resourceGroup().location
-}
-
 @description('The ID of the Azure Firewall Policy.')
 output azureFirewallPolicyResourceId string = azureFirewallPolicy.id
 
@@ -109,6 +101,3 @@ output virtualNetwork2Location string = vnet2.location
 
 @description('The location of the second virtual hub; for testing purposes set as same region of the spoke virtual network.')
 output virtualHub2Location string = vnet2.location
-
-@description('The resource ID of the managed identity.')
-output managedIdentityPrincipalId string = managedIdentity.properties.principalId
