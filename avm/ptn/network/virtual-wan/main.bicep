@@ -13,7 +13,7 @@ param virtualWanParameters virtualWanParameterType
 @description('Required. The parameters for the Virtual Hubs and associated networking components, required if configuring Virtual Hubs.')
 param virtualHubParameters virtualHubParameterType[]
 
-import { lockType } from 'br/public:avm/utl/types/avm-common-types:0.6.0'
+import { lockType } from 'br/public:avm/utl/types/avm-common-types:0.6.1'
 @description('Optional. The lock settings for the Virtual WAN and associated components.')
 param lock lockType?
 
@@ -21,7 +21,7 @@ param lock lockType?
 param enableTelemetry bool = true
 
 @description('Optional. Tags to be applied to all resources.')
-param tags object?
+param globalTags object?
 
 module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.1' = {
   name: '${uniqueString(deployment().name, location)}-${virtualWanParameters.virtualWanName}'
@@ -34,7 +34,7 @@ module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.1' = {
     enableTelemetry: enableTelemetry
     lock: virtualWanParameters.?lock ?? lock
     roleAssignments: virtualWanParameters.?roleAssignments
-    tags: tags ?? virtualWanParameters.?tags
+    tags: union(globalTags ?? {}, virtualWanParameters.?tags ?? {})
     type: virtualWanParameters.?type
   }
 }
@@ -57,7 +57,7 @@ module virtualHubModule 'br/public:avm/res/network/virtual-hub:0.4.0' = [
       lock: lock ?? {}
       routingIntent: virtualHub.?secureHubParameters.?routingIntent
       sku: virtualHub.?sku
-      tags: tags ?? virtualHub.?tags
+      tags: union(globalTags ?? {}, virtualHub.?tags ?? {})
       virtualRouterAsn: virtualHub.?virtualRouterAsn
       virtualRouterIps: virtualHub.?virtualRouterIps
     }
@@ -91,7 +91,7 @@ module firewallModule 'br/public:avm/res/network/azure-firewall:0.8.0' = [
       roleAssignments: virtualHub.?secureHubParameters.?roleAssignments
       enableTelemetry: enableTelemetry
       diagnosticSettings: virtualHub.?secureHubParameters.?diagnosticSettings
-      tags: tags ?? virtualHub.?tags
+      tags: union(globalTags ?? {}, virtualHub.?secureHubParameters.?azureFirewallTags ?? {})
       lock: lock ?? {}
     }
   }
@@ -113,7 +113,7 @@ module vpnServerConfiguration 'br/public:avm/res/network/vpn-server-configuratio
     radiusServerRootCertificates: virtualWanParameters.?p2sVpnParameters.?radiusServerRootCertificates
     radiusServerSecret: virtualWanParameters.?p2sVpnParameters.?radiusServerSecret
     radiusServers: virtualWanParameters.?p2sVpnParameters.?radiusServers
-    tags: tags ?? virtualWanParameters.?tags
+    tags: globalTags
     vpnAuthenticationTypes: virtualWanParameters.?p2sVpnParameters.?vpnAuthenticationTypes
     vpnClientIpsecPolicies: virtualWanParameters.?p2sVpnParameters.?vpnClientIpsecPolicies
     vpnClientRevokedCertificates: virtualWanParameters.?p2sVpnParameters.?vpnClientRevokedCertificates
@@ -668,8 +668,6 @@ type virtualHubParameterType = {
     @description('Optional. Maximum number of capacity units for auto-scaling.')
     autoscaleMaxCapacity: int?
 
-
-
     @description('Optional. Role assignments for the Azure Firewall.')
     roleAssignments: {
       @description('Optional. The name (as GUID) of the role assignment. If not provided, a GUID will be generated.')
@@ -725,6 +723,9 @@ type virtualHubParameterType = {
 
     @description('Optional. Diagnostic settings for the Azure Firewall in the Secure Hub.')
     diagnosticSettings: diagnosticSettingFullType[]?
+
+    @description('Optional. Tags to be applied to the Azure Firewall in the Secure Hub.')
+    azureFirewallTags: object?
   }?
 
   @description('Optional. SKU for the Virtual Hub.')
