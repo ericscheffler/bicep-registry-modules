@@ -229,7 +229,9 @@ output virtualHubs object[] = [
 ]
 
 @description('The resource ID of the VPN Server Configuration, if created. Returns an empty string if not deployed.')
-output vpnServerConfigurationResourceId string? = (virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration ?? false) ? vpnServerConfiguration!.outputs.resourceId : null
+output vpnServerConfigurationResourceId string? = (virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration ?? false)
+  ? vpnServerConfiguration!.outputs.resourceId
+  : null
 
 @description('Imports the VPN client IPsec policies type from the VPN server configuration module.')
 import { vpnClientIpsecPoliciesType } from 'br/public:avm/res/network/vpn-server-configuration:0.1.2'
@@ -675,5 +677,3 @@ type virtualHubParameterType = {
   @description('Optional. IP addresses for the Virtual Router.')
   virtualRouterIps: array?
 }
-
-
