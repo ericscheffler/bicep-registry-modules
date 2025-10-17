@@ -2146,10 +2146,10 @@ NAT rules for the VPN Gateway.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`externalMappings`](#parameter-virtualhubparameterss2svpnparametersnatrulesexternalmappings) | array | External mappings for NAT rule. Required when defining NAT rules. |
-| [`internalMappings`](#parameter-virtualhubparameterss2svpnparametersnatrulesinternalmappings) | array | Internal mappings for NAT rule. Required when defining NAT rules. |
-| [`mode`](#parameter-virtualhubparameterss2svpnparametersnatrulesmode) | string | Mode for NAT rule. Required when defining NAT rules. |
-| [`type`](#parameter-virtualhubparameterss2svpnparametersnatrulestype) | string | Type of NAT rule. Required when defining NAT rules. |
+| [`externalMappings`](#parameter-virtualhubparameterss2svpnparametersnatrulesexternalmappings) | array | External mappings for NAT rule. Required if defining NAT rules. |
+| [`internalMappings`](#parameter-virtualhubparameterss2svpnparametersnatrulesinternalmappings) | array | Internal mappings for NAT rule. Required if defining NAT rules. |
+| [`mode`](#parameter-virtualhubparameterss2svpnparametersnatrulesmode) | string | Mode for NAT rule. Required if defining NAT rules. |
+| [`type`](#parameter-virtualhubparameterss2svpnparametersnatrulestype) | string | Type of NAT rule. Required if defining NAT rules. |
 
 **Optional parameters**
 
@@ -2166,7 +2166,7 @@ Name of the NAT rule.
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.natRules.externalMappings`
 
-External mappings for NAT rule. Required when defining NAT rules.
+External mappings for NAT rule. Required if defining NAT rules.
 
 - Required: No
 - Type: array
@@ -2186,7 +2186,7 @@ Address space for external mapping.
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.natRules.internalMappings`
 
-Internal mappings for NAT rule. Required when defining NAT rules.
+Internal mappings for NAT rule. Required if defining NAT rules.
 
 - Required: No
 - Type: array
@@ -2206,7 +2206,7 @@ Address space for internal mapping.
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.natRules.mode`
 
-Mode for NAT rule. Required when defining NAT rules.
+Mode for NAT rule. Required if defining NAT rules.
 
 - Required: No
 - Type: string
@@ -2220,7 +2220,7 @@ Mode for NAT rule. Required when defining NAT rules.
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.natRules.type`
 
-Type of NAT rule. Required when defining NAT rules.
+Type of NAT rule. Required if defining NAT rules.
 
 - Required: No
 - Type: string

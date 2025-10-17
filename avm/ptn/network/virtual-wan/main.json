@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "16700708726717909463"
+      "templateHash": "13635877334359819964"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -566,7 +566,7 @@
                     },
                     "nullable": true,
                     "metadata": {
-                      "description": "Conditional. External mappings for NAT rule. Required when defining NAT rules."
+                      "description": "Conditional. External mappings for NAT rule. Required if defining NAT rules."
                     }
                   },
                   "internalMappings": {
@@ -584,7 +584,7 @@
                     },
                     "nullable": true,
                     "metadata": {
-                      "description": "Conditional. Internal mappings for NAT rule. Required when defining NAT rules."
+                      "description": "Conditional. Internal mappings for NAT rule. Required if defining NAT rules."
                     }
                   },
                   "mode": {
@@ -595,7 +595,7 @@
                     ],
                     "nullable": true,
                     "metadata": {
-                      "description": "Conditional. Mode for NAT rule. Required when defining NAT rules."
+                      "description": "Conditional. Mode for NAT rule. Required if defining NAT rules."
                     }
                   },
                   "name": {
@@ -612,7 +612,7 @@
                     ],
                     "nullable": true,
                     "metadata": {
-                      "description": "Conditional. Type of NAT rule. Required when defining NAT rules."
+                      "description": "Conditional. Type of NAT rule. Required if defining NAT rules."
                     }
                   },
                   "ipConfigurationId": {
