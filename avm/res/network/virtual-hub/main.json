@@ -199,7 +199,7 @@
       "type": "object",
       "metadata": {
         "__bicep_resource_derived_type!": {
-          "source": "Microsoft.Network/virtualHubs@2022-04-01#properties/tags"
+          "source": "Microsoft.Network/virtualHubs@2024-05-01#properties/tags"
         },
         "description": "Optional. Tags of the resource."
       },
