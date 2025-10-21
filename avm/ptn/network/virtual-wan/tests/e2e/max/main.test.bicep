@@ -62,9 +62,9 @@ module testDeployment '../../../main.bicep' = [
           createP2sVpnServerConfiguration: true
           p2sVpnServerConfigurationName: 'dep-${namePrefix}-p2s-${serviceShort}'
           vpnAuthenticationTypes: ['AAD']
-          aadTenant: '${environment().authentication.loginEndpoint}tenant-id'
+          aadTenant: '${environment().authentication.loginEndpoint}${tenant().tenantId}'
           aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-          aadIssuer: 'https://sts.windows.net/tenant-id/'
+          aadIssuer: 'https://sts.windows.net/${tenant().tenantId}/'
         }
         tags: {
           Environment: 'Test'
@@ -114,11 +114,11 @@ module testDeployment '../../../main.bicep' = [
   }
 ]
 
-module testVpnSite 'br/public:avm/res/network/vpn-site:0.3.1' = {
+module testVpnSite 'br/public:avm/res/network/vpn-site:0.4.0' = {
   scope: resourceGroup
   params: {
     name: 'dep-${namePrefix}-vpnSite-${serviceShort}'
-    virtualWanId: testDeployment[0].outputs.virtualWan.resourceId
+    virtualWanResourceId: testDeployment[0].outputs.virtualWan.resourceId
     ipAddress: '100.1.125.50'
     bgpProperties: {
       asn: 63000
