@@ -84,6 +84,7 @@ module testDeployment '../../../main.bicep' = [
             connectionConfigurationsName: 'default'
             vpnClientAddressPoolAddressPrefixes: ['192.168.1.0/24']
             vpnGatewayScaleUnit: 1
+            vpnGatewayAssociatedRouteTable: 'defaultRouteTable'
           }
           s2sVpnParameters: {
             deployS2SVpnGateway: true

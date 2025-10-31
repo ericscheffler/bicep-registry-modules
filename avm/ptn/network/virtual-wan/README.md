@@ -243,6 +243,7 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
           vpnClientAddressPoolAddressPrefixes: [
             '192.168.1.0/24'
           ]
+          vpnGatewayAssociatedRouteTable: 'defaultRouteTable'
           vpnGatewayName: 'dep-p2s-gw-nvwanmax'
           vpnGatewayScaleUnit: 1
         }
@@ -323,6 +324,7 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
             "vpnClientAddressPoolAddressPrefixes": [
               "192.168.1.0/24"
             ],
+            "vpnGatewayAssociatedRouteTable": "defaultRouteTable",
             "vpnGatewayName": "dep-p2s-gw-nvwanmax",
             "vpnGatewayScaleUnit": 1
           },
@@ -405,6 +407,7 @@ param virtualHubParameters = [
       vpnClientAddressPoolAddressPrefixes: [
         '192.168.1.0/24'
       ]
+      vpnGatewayAssociatedRouteTable: 'defaultRouteTable'
       vpnGatewayName: 'dep-p2s-gw-nvwanmax'
       vpnGatewayScaleUnit: 1
     }
