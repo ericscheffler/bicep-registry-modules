@@ -120,11 +120,6 @@ module testVpnSite 'br/public:avm/res/network/vpn-site:0.4.0' = {
   params: {
     name: 'dep-${namePrefix}-vpnSite-${serviceShort}'
     virtualWanResourceId: testDeployment[0].outputs.virtualWan.resourceId
-    ipAddress: '100.1.125.50'
-    bgpProperties: {
-      asn: 63000
-      bgpPeeringAddress: '10.60.60.10'
-    }
     vpnSiteLinks: [
       {
         name: '${namePrefix}-vSite-${serviceShort}'
