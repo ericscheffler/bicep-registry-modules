@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "13635877334359819964"
+      "templateHash": "3858470788715623459"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -1254,7 +1254,7 @@
       "metadata": {
         "description": "The type of a virtual hub route table.",
         "__bicep_imported_from!": {
-          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.1"
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.2"
         }
       }
     },
@@ -1291,7 +1291,7 @@
       "metadata": {
         "description": "The type of a hub virtual network connection.",
         "__bicep_imported_from!": {
-          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.1"
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.2"
         }
       }
     },
@@ -1353,7 +1353,7 @@
       "metadata": {
         "description": "The type of a routing intent.",
         "__bicep_imported_from!": {
-          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.1"
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/res/network/virtual-hub:0.4.2"
         }
       }
     },
@@ -1595,8 +1595,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.38.5.1644",
-              "templateHash": "13742277943651977632"
+              "version": "0.38.33.27573",
+              "templateHash": "5932480100790628168"
             },
             "name": "Virtual WANs",
             "description": "This module deploys a Virtual WAN."
@@ -1761,7 +1761,7 @@
               "type": "object",
               "metadata": {
                 "__bicep_resource_derived_type!": {
-                  "source": "Microsoft.Network/virtualWans@2024-07-01#properties/tags"
+                  "source": "Microsoft.Network/virtualWans@2024-10-01#properties/tags"
                 },
                 "description": "Optional. Tags of the resource."
               },
@@ -1804,7 +1804,7 @@
               "condition": "[parameters('enableTelemetry')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "[format('46d3xbcp.res.network-virtualwan.{0}.{1}', replace('0.4.1', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
+              "name": "[format('46d3xbcp.res.network-virtualwan.{0}.{1}', replace('0.4.2', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
               "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -1822,13 +1822,13 @@
             },
             "virtualWan": {
               "type": "Microsoft.Network/virtualWans",
-              "apiVersion": "2024-07-01",
+              "apiVersion": "2024-10-01",
               "name": "[parameters('name')]",
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
               "properties": {
-                "allowBranchToBranchTraffic": "[parameters('allowBranchToBranchTraffic')]",
-                "type": "[parameters('type')]"
+                "type": "[parameters('type')]",
+                "allowBranchToBranchTraffic": "[parameters('allowBranchToBranchTraffic')]"
               }
             },
             "virtualWan_lock": {
@@ -1895,7 +1895,7 @@
               "metadata": {
                 "description": "The location the resource was deployed into."
               },
-              "value": "[reference('virtualWan', '2024-07-01', 'full').location]"
+              "value": "[reference('virtualWan', '2024-10-01', 'full').location]"
             }
           }
         }
@@ -1968,8 +1968,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.38.5.1644",
-              "templateHash": "2812580074833565451"
+              "version": "0.38.33.27573",
+              "templateHash": "8908387255385932358"
             },
             "name": "Virtual Hubs",
             "description": "This module deploys a Virtual Hub.\nIf you are planning to deploy a Secure Virtual Hub (with an Azure Firewall integrated), please refer to the Azure Firewall module."
@@ -2354,7 +2354,7 @@
               "condition": "[parameters('enableTelemetry')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2024-03-01",
-              "name": "[take(format('46d3xbcp.res.network-virtualhub.{0}.{1}', replace('0.4.1', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
+              "name": "[take(format('46d3xbcp.res.network-virtualhub.{0}.{1}', replace('0.4.2', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
               "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -2372,7 +2372,7 @@
             },
             "virtualHub": {
               "type": "Microsoft.Network/virtualHubs",
-              "apiVersion": "2024-05-01",
+              "apiVersion": "2024-10-01",
               "name": "[parameters('name')]",
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
@@ -2444,8 +2444,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.38.5.1644",
-                      "templateHash": "12108117480429427500"
+                      "version": "0.38.33.27573",
+                      "templateHash": "3787378245837577279"
                     },
                     "name": "Virtual Hub Routing Intent",
                     "description": "This module configures Routing Intent for a Virtual Hub; this module requires an existing Virtual Hub, as well the firewall Resource ID."
@@ -2491,7 +2491,7 @@
                   "resources": [
                     {
                       "type": "Microsoft.Network/virtualHubs/routingIntent",
-                      "apiVersion": "2024-05-01",
+                      "apiVersion": "2024-10-01",
                       "name": "[format('{0}/{1}', parameters('virtualHubName'), parameters('name'))]",
                       "properties": {
                         "routingPolicies": "[if(and(equals(parameters('internetToFirewall'), true()), equals(parameters('privateToFirewall'), true())), createArray(createObject('name', '_policy_PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', parameters('azureFirewallResourceId')), createObject('name', '_policy_PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', parameters('azureFirewallResourceId'))), if(and(equals(parameters('internetToFirewall'), true()), equals(parameters('privateToFirewall'), false())), createArray(createObject('name', '_policy_PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', parameters('azureFirewallResourceId'))), if(and(equals(parameters('internetToFirewall'), false()), equals(parameters('privateToFirewall'), true())), createArray(createObject('name', '_policy_PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', parameters('azureFirewallResourceId'))), null())))]"
@@ -2561,8 +2561,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.38.5.1644",
-                      "templateHash": "14982132108340978491"
+                      "version": "0.38.33.27573",
+                      "templateHash": "5133404704415871179"
                     },
                     "name": "Virtual Hub Route Tables",
                     "description": "This module deploys a Virtual Hub Route Table."
@@ -2599,12 +2599,12 @@
                     "virtualHub": {
                       "existing": true,
                       "type": "Microsoft.Network/virtualHubs",
-                      "apiVersion": "2022-11-01",
+                      "apiVersion": "2024-10-01",
                       "name": "[parameters('virtualHubName')]"
                     },
                     "hubRouteTable": {
                       "type": "Microsoft.Network/virtualHubs/hubRouteTables",
-                      "apiVersion": "2024-05-01",
+                      "apiVersion": "2024-10-01",
                       "name": "[format('{0}/{1}', parameters('virtualHubName'), parameters('name'))]",
                       "properties": {
                         "labels": "[parameters('labels')]",
@@ -2678,8 +2678,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.38.5.1644",
-                      "templateHash": "14515842794247522789"
+                      "version": "0.38.33.27573",
+                      "templateHash": "18436439490456964294"
                     },
                     "name": "Virtual Hub Virtual Network Connections",
                     "description": "This module deploys a Virtual Hub Virtual Network Connection."
@@ -2722,12 +2722,12 @@
                     "virtualHub": {
                       "existing": true,
                       "type": "Microsoft.Network/virtualHubs",
-                      "apiVersion": "2024-01-01",
+                      "apiVersion": "2024-10-01",
                       "name": "[parameters('virtualHubName')]"
                     },
                     "hubVirtualNetworkConnection": {
                       "type": "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections",
-                      "apiVersion": "2024-05-01",
+                      "apiVersion": "2024-10-01",
                       "name": "[format('{0}/{1}', parameters('virtualHubName'), parameters('name'))]",
                       "properties": {
                         "enableInternetSecurity": "[parameters('enableInternetSecurity')]",
@@ -2796,7 +2796,7 @@
               "metadata": {
                 "description": "The location the resource was deployed into."
               },
-              "value": "[reference('virtualHub', '2024-05-01', 'full').location]"
+              "value": "[reference('virtualHub', '2024-10-01', 'full').location]"
             }
           }
         }
@@ -2872,7 +2872,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.38.33.27573",
-              "templateHash": "1527152937335260135"
+              "templateHash": "5414068221940089654"
             },
             "name": "Azure Firewalls",
             "description": "This module deploys an Azure Firewall."
@@ -3631,7 +3631,7 @@
               "type": "string",
               "defaultValue": "",
               "metadata": {
-                "description": "Optional. The Public IP resource ID to associate to the AzureFirewallSubnet. If empty, then the Public IP that is created as part of this module will be applied to the AzureFirewallSubnet."
+                "description": "Optional. The Public IP resource ID to associate to the Azure Firewall. If empty, then the Public IP that is created as part of this module will be applied to the Azure Firewall."
               }
             },
             "additionalPublicIpConfigurations": {
@@ -3705,7 +3705,7 @@
               "$ref": "#/definitions/hubIPAddressesType",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. IP addresses associated with AzureFirewall. Required if `virtualHubId` is supplied."
+                "description": "Conditional. IP addresses associated with AzureFirewall. Required if `virtualHubId` is supplied & `publicIPResourceID` is empty."
               }
             },
             "virtualHubResourceId": {
@@ -3854,7 +3854,7 @@
               "condition": "[parameters('enableTelemetry')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2024-03-01",
-              "name": "[format('46d3xbcp.res.network-azurefirewall.{0}.{1}', replace('0.9.0', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
+              "name": "[format('46d3xbcp.res.network-azurefirewall.{0}.{1}', replace('0.9.1', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
               "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -3877,7 +3877,7 @@
               "location": "[parameters('location')]",
               "zones": "[map(parameters('availabilityZones'), lambda('zone', format('{0}', lambdaVariables('zone'))))]",
               "tags": "[parameters('tags')]",
-              "properties": "[if(equals(variables('azureSkuName'), 'AZFW_VNet'), createObject('threatIntelMode', parameters('threatIntelMode'), 'firewallPolicy', if(not(empty(parameters('firewallPolicyId'))), createObject('id', parameters('firewallPolicyId')), null()), 'ipConfigurations', concat(createArray(createObject('name', if(not(empty(parameters('publicIPResourceID'))), last(split(parameters('publicIPResourceID'), '/')), tryGet(if(and(empty(parameters('publicIPResourceID')), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('publicIPAddress'), null()), 'outputs', 'name', 'value')), 'properties', union(if(equals(variables('azureSkuName'), 'AZFW_VNet'), createObject('subnet', createObject('id', format('{0}/subnets/AzureFirewallSubnet', parameters('virtualNetworkResourceId')))), createObject()), if(or(not(empty(parameters('publicIPResourceID'))), not(empty(parameters('publicIPAddressObject')))), createObject('publicIPAddress', createObject('id', if(not(empty(parameters('publicIPResourceID'))), parameters('publicIPResourceID'), tryGet(if(and(empty(parameters('publicIPResourceID')), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('publicIPAddress'), null()), 'outputs', 'resourceId', 'value')))), createObject())))), variables('additionalPublicIpConfigurationsVar')), 'managementIpConfiguration', if(variables('requiresManagementIp'), createObject('name', if(not(empty(parameters('managementIPResourceID'))), last(split(parameters('managementIPResourceID'), '/')), tryGet(if(and(variables('isCreateDefaultManagementIP'), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('managementIPAddress'), null()), 'outputs', 'name', 'value')), 'properties', createObject('subnet', createObject('id', format('{0}/subnets/AzureFirewallManagementSubnet', parameters('virtualNetworkResourceId'))), 'publicIPAddress', createObject('id', if(not(empty(parameters('managementIPResourceID'))), parameters('managementIPResourceID'), tryGet(if(and(variables('isCreateDefaultManagementIP'), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('managementIPAddress'), null()), 'outputs', 'resourceId', 'value'))))), null()), 'sku', createObject('name', variables('azureSkuName'), 'tier', parameters('azureSkuTier')), 'applicationRuleCollections', coalesce(parameters('applicationRuleCollections'), createArray()), 'natRuleCollections', coalesce(parameters('natRuleCollections'), createArray()), 'networkRuleCollections', coalesce(parameters('networkRuleCollections'), createArray())), createObject('autoscaleConfiguration', createObject('maxCapacity', parameters('autoscaleMaxCapacity'), 'minCapacity', parameters('autoscaleMinCapacity')), 'firewallPolicy', if(not(empty(parameters('firewallPolicyId'))), createObject('id', parameters('firewallPolicyId')), null()), 'sku', createObject('name', variables('azureSkuName'), 'tier', parameters('azureSkuTier')), 'hubIPAddresses', if(not(empty(parameters('hubIPAddresses'))), parameters('hubIPAddresses'), null()), 'virtualHub', if(not(empty(parameters('virtualHubResourceId'))), createObject('id', parameters('virtualHubResourceId')), null())))]",
+              "properties": "[if(equals(variables('azureSkuName'), 'AZFW_VNet'), createObject('autoscaleConfiguration', createObject('maxCapacity', parameters('autoscaleMaxCapacity'), 'minCapacity', parameters('autoscaleMinCapacity')), 'threatIntelMode', parameters('threatIntelMode'), 'firewallPolicy', if(not(empty(parameters('firewallPolicyId'))), createObject('id', parameters('firewallPolicyId')), null()), 'ipConfigurations', concat(createArray(createObject('name', if(not(empty(parameters('publicIPResourceID'))), last(split(parameters('publicIPResourceID'), '/')), tryGet(if(and(empty(parameters('publicIPResourceID')), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('publicIPAddress'), null()), 'outputs', 'name', 'value')), 'properties', union(if(equals(variables('azureSkuName'), 'AZFW_VNet'), createObject('subnet', createObject('id', format('{0}/subnets/AzureFirewallSubnet', parameters('virtualNetworkResourceId')))), createObject()), if(or(not(empty(parameters('publicIPResourceID'))), not(empty(parameters('publicIPAddressObject')))), createObject('publicIPAddress', createObject('id', if(not(empty(parameters('publicIPResourceID'))), parameters('publicIPResourceID'), tryGet(if(and(empty(parameters('publicIPResourceID')), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('publicIPAddress'), null()), 'outputs', 'resourceId', 'value')))), createObject())))), variables('additionalPublicIpConfigurationsVar')), 'managementIpConfiguration', if(variables('requiresManagementIp'), createObject('name', if(not(empty(parameters('managementIPResourceID'))), last(split(parameters('managementIPResourceID'), '/')), tryGet(if(and(variables('isCreateDefaultManagementIP'), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('managementIPAddress'), null()), 'outputs', 'name', 'value')), 'properties', createObject('subnet', createObject('id', format('{0}/subnets/AzureFirewallManagementSubnet', parameters('virtualNetworkResourceId'))), 'publicIPAddress', createObject('id', if(not(empty(parameters('managementIPResourceID'))), parameters('managementIPResourceID'), tryGet(if(and(variables('isCreateDefaultManagementIP'), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('managementIPAddress'), null()), 'outputs', 'resourceId', 'value'))))), null()), 'sku', createObject('name', variables('azureSkuName'), 'tier', parameters('azureSkuTier')), 'applicationRuleCollections', coalesce(parameters('applicationRuleCollections'), createArray()), 'natRuleCollections', coalesce(parameters('natRuleCollections'), createArray()), 'networkRuleCollections', coalesce(parameters('networkRuleCollections'), createArray())), createObject('autoscaleConfiguration', createObject('maxCapacity', parameters('autoscaleMaxCapacity'), 'minCapacity', parameters('autoscaleMinCapacity')), 'firewallPolicy', if(not(empty(parameters('firewallPolicyId'))), createObject('id', parameters('firewallPolicyId')), null()), 'sku', createObject('name', variables('azureSkuName'), 'tier', parameters('azureSkuTier')), 'ipConfigurations', if(not(empty(parameters('publicIPResourceID'))), concat(createArray(createObject('name', if(not(empty(parameters('publicIPResourceID'))), last(split(parameters('publicIPResourceID'), '/')), tryGet(if(and(empty(parameters('publicIPResourceID')), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('publicIPAddress'), null()), 'outputs', 'name', 'value')), 'properties', union(if(equals(variables('azureSkuName'), 'AZFW_VNet'), createObject('subnet', createObject('id', format('{0}/subnets/AzureFirewallSubnet', parameters('virtualNetworkResourceId')))), createObject()), if(or(not(empty(parameters('publicIPResourceID'))), not(empty(parameters('publicIPAddressObject')))), createObject('publicIPAddress', createObject('id', if(not(empty(parameters('publicIPResourceID'))), parameters('publicIPResourceID'), tryGet(if(and(empty(parameters('publicIPResourceID')), equals(variables('azureSkuName'), 'AZFW_VNet')), reference('publicIPAddress'), null()), 'outputs', 'resourceId', 'value')))), createObject())))), variables('additionalPublicIpConfigurationsVar')), null()), 'hubIPAddresses', if(not(empty(parameters('publicIPResourceID'))), null(), if(not(empty(parameters('hubIPAddresses'))), parameters('hubIPAddresses'), null())), 'virtualHub', if(not(empty(parameters('virtualHubResourceId'))), createObject('id', parameters('virtualHubResourceId')), null())))]",
               "dependsOn": [
                 "managementIPAddress",
                 "publicIPAddress"

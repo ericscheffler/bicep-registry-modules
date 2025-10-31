@@ -22,11 +22,11 @@ This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure
 | `Microsoft.Network/expressRouteGateways` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_expressroutegateways.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/expressRouteGateways)</li></ul> |
 | `Microsoft.Network/p2svpnGateways` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_p2svpngateways.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/p2svpnGateways)</li></ul> |
 | `Microsoft.Network/publicIPAddresses` | 2024-05-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_publicipaddresses.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-05-01/publicIPAddresses)</li></ul> |
-| `Microsoft.Network/virtualHubs` | 2024-05-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-05-01/virtualHubs)</li></ul> |
-| `Microsoft.Network/virtualHubs/hubRouteTables` | 2024-05-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_hubroutetables.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-05-01/virtualHubs/hubRouteTables)</li></ul> |
-| `Microsoft.Network/virtualHubs/hubVirtualNetworkConnections` | 2024-05-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_hubvirtualnetworkconnections.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-05-01/virtualHubs/hubVirtualNetworkConnections)</li></ul> |
-| `Microsoft.Network/virtualHubs/routingIntent` | 2024-05-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_routingintent.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-05-01/virtualHubs/routingIntent)</li></ul> |
-| `Microsoft.Network/virtualWans` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualwans.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/virtualWans)</li></ul> |
+| `Microsoft.Network/virtualHubs` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs)</li></ul> |
+| `Microsoft.Network/virtualHubs/hubRouteTables` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_hubroutetables.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs/hubRouteTables)</li></ul> |
+| `Microsoft.Network/virtualHubs/hubVirtualNetworkConnections` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_hubvirtualnetworkconnections.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs/hubVirtualNetworkConnections)</li></ul> |
+| `Microsoft.Network/virtualHubs/routingIntent` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_routingintent.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs/routingIntent)</li></ul> |
+| `Microsoft.Network/virtualWans` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualwans.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualWans)</li></ul> |
 | `Microsoft.Network/vpnGateways` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_vpngateways.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/vpnGateways)</li></ul> |
 | `Microsoft.Network/vpnGateways/natRules` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_vpngateways_natrules.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/vpnGateways/natRules)</li></ul> |
 | `Microsoft.Network/vpnGateways/vpnConnections` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_vpngateways_vpnconnections.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/vpnGateways/vpnConnections)</li></ul> |
@@ -267,7 +267,7 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
       location: '<location>'
       p2sVpnParameters: {
         aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-        aadIssuer: 'https://sts.windows.net/tenant-id/'
+        aadIssuer: '<aadIssuer>'
         aadTenant: '<aadTenant>'
         createP2sVpnServerConfiguration: true
         p2sVpnServerConfigurationName: 'dep-p2s-nvwanmax'
@@ -349,7 +349,7 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
         "location": "<location>",
         "p2sVpnParameters": {
           "aadAudience": "41b23e61-6c1e-4545-b367-cd054e0ed4b4",
-          "aadIssuer": "https://sts.windows.net/tenant-id/",
+          "aadIssuer": "<aadIssuer>",
           "aadTenant": "<aadTenant>",
           "createP2sVpnServerConfiguration": true,
           "p2sVpnServerConfigurationName": "dep-p2s-nvwanmax",
@@ -429,7 +429,7 @@ param virtualWanParameters = {
   location: '<location>'
   p2sVpnParameters: {
     aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-    aadIssuer: 'https://sts.windows.net/tenant-id/'
+    aadIssuer: '<aadIssuer>'
     aadTenant: '<aadTenant>'
     createP2sVpnServerConfiguration: true
     p2sVpnServerConfigurationName: 'dep-p2s-nvwanmax'

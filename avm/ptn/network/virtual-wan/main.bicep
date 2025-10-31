@@ -22,7 +22,7 @@ param enableTelemetry bool = true
 @description('Optional. Tags to be applied to all resources.')
 param tags object?
 
-module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.1' = {
+module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.2' = {
   name: '${uniqueString(deployment().name, location)}-${virtualWanParameters.virtualWanName}'
   params: {
     // Required parameters
@@ -38,7 +38,8 @@ module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.1' = {
   }
 }
 
-module virtualHubModule 'br/public:avm/res/network/virtual-hub:0.4.1' = [
+#disable-next-line BCP081
+module virtualHubModule 'br/public:avm/res/network/virtual-hub:0.4.2' = [
   for (virtualHub, i) in virtualHubParameters!: {
     name: '${uniqueString(deployment().name, location)}-${virtualHub.hubName}'
     params: {
@@ -63,7 +64,7 @@ module virtualHubModule 'br/public:avm/res/network/virtual-hub:0.4.1' = [
   }
 ]
 
-module firewallModule 'br/public:avm/res/network/azure-firewall:0.9.0' = [
+module firewallModule 'br/public:avm/res/network/azure-firewall:0.9.1' = [
   for (virtualHub, i) in virtualHubParameters!: if (virtualHub.?secureHubParameters.?deploySecureHub!) {
     name: virtualHub.?secureHubParameters.?azureFirewallName!
     params: {
@@ -240,13 +241,13 @@ import { vpnClientIpsecPoliciesType } from 'br/public:avm/res/network/vpn-server
 import { vnetRoutesStaticRoutesType } from 'br/public:avm/res/network/p2s-vpn-gateway:0.1.3'
 
 @description('Imports the Hub Virtual Network Connection type from the Virtual Hub module.')
-import { hubVirtualNetworkConnectionType } from 'br/public:avm/res/network/virtual-hub:0.4.1'
+import { hubVirtualNetworkConnectionType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
 
 @description('Imports the Routing Intent type from the Virtual Hub module.')
-import { routingIntentType } from 'br/public:avm/res/network/virtual-hub:0.4.1'
+import { routingIntentType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
 
 @description('Imports the Hub Route Table type from the Virtual Hub module.')
-import { hubRouteTableType } from 'br/public:avm/res/network/virtual-hub:0.4.1'
+import { hubRouteTableType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
 
 @description('Imports the full diagnostic setting type from the AVM common types module.')
 import { diagnosticSettingFullType } from 'br/public:avm/utl/types/avm-common-types:0.4.0'
