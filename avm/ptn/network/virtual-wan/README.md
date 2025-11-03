@@ -2444,7 +2444,7 @@ Whether to deploy a Secure Hub.
 
 Name of the Azure Firewall.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.secureHubParameters.additionalPublicIpConfigurationResourceIds`

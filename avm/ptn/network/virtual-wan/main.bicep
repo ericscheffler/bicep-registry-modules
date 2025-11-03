@@ -654,7 +654,7 @@ type virtualHubParameterType = {
     firewallPolicyResourceId: string?
 
     @description('Conditional. Name of the Azure Firewall.')
-    azureFirewallName: string
+    azureFirewallName: string?
 
     @description('Optional. SKU for the Azure Firewall.')
     azureFirewallSku: ('Premium' | 'Standard' | 'Basic')?
