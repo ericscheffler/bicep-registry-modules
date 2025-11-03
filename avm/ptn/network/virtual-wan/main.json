@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "3858470788715623459"
+      "templateHash": "3134662302776334314"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -920,7 +920,7 @@
             "azureFirewallName": {
               "type": "string",
               "metadata": {
-                "description": "Required. Name of the Azure Firewall."
+                "description": "Conditional. Name of the Azure Firewall. Required when deploySecureHub is true."
               }
             },
             "azureFirewallSku": {
@@ -930,14 +930,18 @@
                 "Premium",
                 "Standard"
               ],
+              "nullable": true,
               "metadata": {
-                "description": "Required. SKU for the Azure Firewall."
+                "description": "Optional. SKU for the Azure Firewall."
               }
             },
             "azureFirewallPublicIPCount": {
               "type": "int",
+              "nullable": true,
+              "minValue": 1,
+              "maxValue": 100,
               "metadata": {
-                "description": "Required. Number of public IPs for the Azure Firewall."
+                "description": "Optional. Number of public IPs for the Azure Firewall (1-100)."
               }
             },
             "publicIPAddressObject": {
@@ -1532,6 +1536,28 @@
       }
     }
   },
+  "variables": {
+    "copy": [
+      {
+        "name": "hubConfigurations",
+        "count": "[length(parameters('virtualHubParameters'))]",
+        "input": {
+          "hub": "[parameters('virtualHubParameters')[copyIndex('hubConfigurations')]]",
+          "index": "[copyIndex('hubConfigurations')]",
+          "deploySecureHub": "[coalesce(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex('hubConfigurations')], 'secureHubParameters'), 'deploySecureHub'), false())]",
+          "deployP2sGateway": "[coalesce(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex('hubConfigurations')], 'p2sVpnParameters'), 'deployP2SVpnGateway'), false())]",
+          "deployS2sGateway": "[coalesce(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex('hubConfigurations')], 's2sVpnParameters'), 'deployS2SVpnGateway'), false())]",
+          "deployExpressRoute": "[coalesce(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex('hubConfigurations')], 'expressRouteParameters'), 'deployExpressRouteGateway'), false())]",
+          "hubTags": "[union(variables('combinedTags'), coalesce(tryGet(parameters('virtualHubParameters')[copyIndex('hubConfigurations')], 'tags'), createObject()))]",
+          "hubLocation": "[parameters('virtualHubParameters')[copyIndex('hubConfigurations')].hubLocation]"
+        }
+      }
+    ],
+    "combinedTags": "[union(coalesce(parameters('tags'), createObject()), coalesce(tryGet(parameters('virtualWanParameters'), 'tags'), createObject()))]",
+    "computedLock": "[coalesce(coalesce(tryGet(parameters('virtualWanParameters'), 'lock'), parameters('lock')), createObject())]",
+    "virtualWanLocation": "[coalesce(tryGet(parameters('virtualWanParameters'), 'location'), parameters('location'))]",
+    "createP2sVpnServerConfig": "[coalesce(tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'createP2sVpnServerConfiguration'), false())]"
+  },
   "resources": {
     "avmTelemetry": {
       "condition": "[parameters('enableTelemetry')]",
@@ -1567,7 +1593,7 @@
             "value": "[parameters('virtualWanParameters').virtualWanName]"
           },
           "location": {
-            "value": "[tryGet(parameters('virtualWanParameters'), 'location')]"
+            "value": "[variables('virtualWanLocation')]"
           },
           "allowBranchToBranchTraffic": {
             "value": "[tryGet(parameters('virtualWanParameters'), 'allowBranchToBranchTraffic')]"
@@ -1576,13 +1602,13 @@
             "value": "[parameters('enableTelemetry')]"
           },
           "lock": {
-            "value": "[coalesce(tryGet(parameters('virtualWanParameters'), 'lock'), parameters('lock'))]"
+            "value": "[variables('computedLock')]"
           },
           "roleAssignments": {
             "value": "[tryGet(parameters('virtualWanParameters'), 'roleAssignments')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualWanParameters'), 'tags'))]"
+            "value": "[variables('combinedTags')]"
           },
           "type": {
             "value": "[tryGet(parameters('virtualWanParameters'), 'type')]"
@@ -1904,11 +1930,11 @@
     "virtualHubModule": {
       "copy": {
         "name": "virtualHubModule",
-        "count": "[length(parameters('virtualHubParameters'))]"
+        "count": "[length(variables('hubConfigurations'))]"
       },
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "[format('{0}-{1}', uniqueString(deployment().name, parameters('location')), parameters('virtualHubParameters')[copyIndex()].hubName)]",
+      "name": "[format('{0}-{1}', uniqueString(deployment().name, parameters('location')), variables('hubConfigurations')[copyIndex()].hub.hubName)]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -1916,49 +1942,49 @@
         "mode": "Incremental",
         "parameters": {
           "name": {
-            "value": "[parameters('virtualHubParameters')[copyIndex()].hubName]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hub.hubName]"
           },
           "addressPrefix": {
-            "value": "[parameters('virtualHubParameters')[copyIndex()].hubAddressPrefix]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hub.hubAddressPrefix]"
           },
           "location": {
-            "value": "[parameters('virtualHubParameters')[copyIndex()].hubLocation]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hubLocation]"
           },
           "virtualWanResourceId": {
             "value": "[reference('virtualWan').outputs.resourceId.value]"
           },
           "allowBranchToBranchTraffic": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'allowBranchToBranchTraffic')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'allowBranchToBranchTraffic')]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
           "hubRoutingPreference": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'hubRoutingPreference')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'hubRoutingPreference')]"
           },
           "hubRouteTables": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'hubRouteTables')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'hubRouteTables')]"
           },
           "hubVirtualNetworkConnections": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'hubVirtualNetworkConnections')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'hubVirtualNetworkConnections')]"
           },
           "lock": {
-            "value": "[coalesce(parameters('lock'), createObject())]"
+            "value": "[variables('computedLock')]"
           },
           "routingIntent": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'routingIntent')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'routingIntent')]"
           },
           "sku": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'sku')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'sku')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualHubParameters')[copyIndex()], 'tags'))]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hubTags]"
           },
           "virtualRouterAsn": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'virtualRouterAsn')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'virtualRouterAsn')]"
           },
           "virtualRouterIps": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'virtualRouterIps')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'virtualRouterIps')]"
           }
         },
         "template": {
@@ -2808,12 +2834,12 @@
     "firewallModule": {
       "copy": {
         "name": "firewallModule",
-        "count": "[length(parameters('virtualHubParameters'))]"
+        "count": "[length(variables('hubConfigurations'))]"
       },
-      "condition": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'deploySecureHub')]",
+      "condition": "[variables('hubConfigurations')[copyIndex()].deploySecureHub]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'azureFirewallName')]",
+      "name": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'azureFirewallName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -2821,47 +2847,47 @@
         "mode": "Incremental",
         "parameters": {
           "name": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'azureFirewallName')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'azureFirewallName')]"
           },
           "azureSkuTier": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'azureFirewallSku')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'azureFirewallSku')]"
           },
           "virtualHubResourceId": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.resourceId.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.resourceId.value]"
           },
           "firewallPolicyId": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'firewallPolicyResourceId')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'firewallPolicyResourceId')]"
           },
           "location": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.location.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.location.value]"
           },
           "hubIPAddresses": {
             "value": {
               "publicIPs": {
-                "count": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'azureFirewallPublicIPCount')]"
+                "count": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'azureFirewallPublicIPCount')]"
               }
             }
           },
           "publicIPAddressObject": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'publicIPAddressObject')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'publicIPAddressObject')]"
           },
           "publicIPResourceID": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'publicIPResourceID')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'publicIPResourceID')]"
           },
           "additionalPublicIpConfigurations": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'additionalPublicIpConfigurationResourceIds')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'additionalPublicIpConfigurationResourceIds')]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
           "diagnosticSettings": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'secureHubParameters'), 'diagnosticSettings')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'diagnosticSettings')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualHubParameters')[copyIndex()], 'tags'))]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hubTags]"
           },
           "lock": {
-            "value": "[coalesce(parameters('lock'), createObject())]"
+            "value": "[variables('computedLock')]"
           }
         },
         "template": {
@@ -5499,12 +5525,12 @@
         }
       },
       "dependsOn": [
-        "[format('virtualHubModule[{0}]', copyIndex())]",
-        "[format('virtualHubModule[{0}]', copyIndex())]"
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]"
       ]
     },
     "vpnServerConfiguration": {
-      "condition": "[equals(tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'createP2sVpnServerConfiguration'), true())]",
+      "condition": "[variables('createP2sVpnServerConfig')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
       "name": "[tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters', 'p2sVpnServerConfigurationName')]",
@@ -5518,7 +5544,7 @@
             "value": "[tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters', 'p2sVpnServerConfigurationName')]"
           },
           "location": {
-            "value": "[reference('virtualWan').outputs.location.value]"
+            "value": "[variables('virtualWanLocation')]"
           },
           "aadAudience": {
             "value": "[tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'aadAudience')]"
@@ -5533,7 +5559,7 @@
             "value": "[parameters('enableTelemetry')]"
           },
           "lock": {
-            "value": "[coalesce(parameters('lock'), createObject())]"
+            "value": "[variables('computedLock')]"
           },
           "p2sConfigurationPolicyGroups": {
             "value": "[tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'p2sConfigurationPolicyGroups')]"
@@ -5554,7 +5580,7 @@
             "value": "[tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'radiusServers')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualWanParameters'), 'tags'))]"
+            "value": "[variables('combinedTags')]"
           },
           "vpnAuthenticationTypes": {
             "value": "[tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'vpnAuthenticationTypes')]"
@@ -5993,20 +6019,17 @@
             }
           }
         }
-      },
-      "dependsOn": [
-        "virtualWan"
-      ]
+      }
     },
     "p2sVpnGatewayModule": {
       "copy": {
         "name": "p2sVpnGatewayModule",
-        "count": "[length(parameters('virtualHubParameters'))]"
+        "count": "[length(variables('hubConfigurations'))]"
       },
-      "condition": "[equals(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'deployP2SVpnGateway'), true())]",
+      "condition": "[variables('hubConfigurations')[copyIndex()].deployP2sGateway]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vpnGatewayName')]",
+      "name": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'vpnGatewayName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -6014,61 +6037,61 @@
         "mode": "Incremental",
         "parameters": {
           "name": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vpnGatewayName')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'vpnGatewayName')]"
           },
           "location": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.location.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.location.value]"
           },
           "virtualHubResourceId": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.resourceId.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.resourceId.value]"
           },
           "vpnServerConfigurationResourceId": {
-            "value": "[tryGet(tryGet(tryGet(if(equals(tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'createP2sVpnServerConfiguration'), true()), reference('vpnServerConfiguration'), null()), 'outputs'), 'resourceId'), 'value')]"
+            "value": "[tryGet(tryGet(tryGet(if(variables('createP2sVpnServerConfig'), reference('vpnServerConfiguration'), null()), 'outputs'), 'resourceId'), 'value')]"
           },
           "associatedRouteTableName": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vpnGatewayAssociatedRouteTable')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'vpnGatewayAssociatedRouteTable')]"
           },
           "vpnGatewayScaleUnit": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vpnGatewayScaleUnit')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'vpnGatewayScaleUnit')]"
           },
           "vpnClientAddressPoolAddressPrefixes": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vpnClientAddressPoolAddressPrefixes')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'vpnClientAddressPoolAddressPrefixes')]"
           },
           "p2SConnectionConfigurationsName": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'connectionConfigurationsName')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'connectionConfigurationsName')]"
           },
           "customDnsServers": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'customDnsServers')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'customDnsServers')]"
           },
           "enableInternetSecurity": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'enableInternetSecurity')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'enableInternetSecurity')]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
           "inboundRouteMapResourceId": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'inboundRouteMapResourceId')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'inboundRouteMapResourceId')]"
           },
           "isRoutingPreferenceInternet": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'isRoutingPreferenceInternet')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'isRoutingPreferenceInternet')]"
           },
           "lock": {
-            "value": "[coalesce(parameters('lock'), createObject())]"
+            "value": "[variables('computedLock')]"
           },
           "outboundRouteMapResourceId": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'outboundRouteMapResourceId')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'outboundRouteMapResourceId')]"
           },
           "propagatedLabelNames": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'propagatedLabelNames')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'propagatedLabelNames')]"
           },
           "propagatedRouteTableNames": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'propagatedRouteTableNames')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'propagatedRouteTableNames')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualHubParameters')[copyIndex()], 'tags'))]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hubTags]"
           },
           "vnetRoutesStaticRoutes": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'p2sVpnParameters'), 'vnetRoutesStaticRoutes')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'p2sVpnParameters'), 'vnetRoutesStaticRoutes')]"
           }
         },
         "template": {
@@ -6451,20 +6474,20 @@
         }
       },
       "dependsOn": [
-        "[format('virtualHubModule[{0}]', copyIndex())]",
-        "[format('virtualHubModule[{0}]', copyIndex())]",
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
         "vpnServerConfiguration"
       ]
     },
     "s2sVpnGatewayModule": {
       "copy": {
         "name": "s2sVpnGatewayModule",
-        "count": "[length(parameters('virtualHubParameters'))]"
+        "count": "[length(variables('hubConfigurations'))]"
       },
-      "condition": "[equals(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'deployS2SVpnGateway'), true())]",
+      "condition": "[variables('hubConfigurations')[copyIndex()].deployS2sGateway]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'vpnGatewayName')]",
+      "name": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'vpnGatewayName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -6472,40 +6495,40 @@
         "mode": "Incremental",
         "parameters": {
           "name": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'vpnGatewayName')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'vpnGatewayName')]"
           },
           "location": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.location.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.location.value]"
           },
           "virtualHubResourceId": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.resourceId.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.resourceId.value]"
           },
           "bgpSettings": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'bgpSettings')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'bgpSettings')]"
           },
           "enableBgpRouteTranslationForNat": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'enableBgpRouteTranslationForNat')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'enableBgpRouteTranslationForNat')]"
           },
           "isRoutingPreferenceInternet": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'isRoutingPreferenceInternet')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'isRoutingPreferenceInternet')]"
           },
           "natRules": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'natRules')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'natRules')]"
           },
           "vpnConnections": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'vpnConnections')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'vpnConnections')]"
           },
           "vpnGatewayScaleUnit": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 's2sVpnParameters'), 'vpnGatewayScaleUnit')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 's2sVpnParameters'), 'vpnGatewayScaleUnit')]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualHubParameters')[copyIndex()], 'tags'))]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hubTags]"
           },
           "lock": {
-            "value": "[coalesce(parameters('lock'), createObject())]"
+            "value": "[variables('computedLock')]"
           }
         },
         "template": {
@@ -8402,19 +8425,19 @@
         }
       },
       "dependsOn": [
-        "[format('virtualHubModule[{0}]', copyIndex())]",
-        "[format('virtualHubModule[{0}]', copyIndex())]"
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]"
       ]
     },
     "expressRouteGatewayModule": {
       "copy": {
         "name": "expressRouteGatewayModule",
-        "count": "[length(parameters('virtualHubParameters'))]"
+        "count": "[length(variables('hubConfigurations'))]"
       },
-      "condition": "[equals(tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'deployExpressRouteGateway'), true())]",
+      "condition": "[variables('hubConfigurations')[copyIndex()].deployExpressRoute]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'expressRouteGatewayName')]",
+      "name": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'expressRouteParameters'), 'expressRouteGatewayName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -8422,34 +8445,34 @@
         "mode": "Incremental",
         "parameters": {
           "name": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'expressRouteGatewayName')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'expressRouteParameters'), 'expressRouteGatewayName')]"
           },
           "location": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.location.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.location.value]"
           },
           "virtualHubResourceId": {
-            "value": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.resourceId.value]"
+            "value": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.resourceId.value]"
           },
           "allowNonVirtualWanTraffic": {
-            "value": "[tryGet(parameters('virtualHubParameters')[copyIndex()], 'allowBranchToBranchTraffic')]"
+            "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'allowBranchToBranchTraffic')]"
           },
           "autoScaleConfigurationBoundsMin": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'autoScaleConfigurationBoundsMin')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'expressRouteParameters'), 'autoScaleConfigurationBoundsMin')]"
           },
           "autoScaleConfigurationBoundsMax": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'autoScaleConfigurationBoundsMax')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'expressRouteParameters'), 'autoScaleConfigurationBoundsMax')]"
           },
           "expressRouteConnections": {
-            "value": "[tryGet(tryGet(parameters('virtualHubParameters')[copyIndex()], 'expressRouteParameters'), 'expressRouteConnections')]"
+            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'expressRouteParameters'), 'expressRouteConnections')]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('tags'), tryGet(parameters('virtualHubParameters')[copyIndex()], 'tags'))]"
+            "value": "[variables('hubConfigurations')[copyIndex()].hubTags]"
           },
           "lock": {
-            "value": "[coalesce(parameters('lock'), createObject())]"
+            "value": "[variables('computedLock')]"
           }
         },
         "template": {
@@ -8790,8 +8813,8 @@
         }
       },
       "dependsOn": [
-        "[format('virtualHubModule[{0}]', copyIndex())]",
-        "[format('virtualHubModule[{0}]', copyIndex())]"
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]"
       ]
     }
   },
@@ -8816,28 +8839,49 @@
     },
     "virtualHubs": {
       "type": "array",
-      "items": {
-        "type": "object"
-      },
       "metadata": {
-        "description": "The array containing the Virtual Hub information."
+        "description": "The array containing the Virtual Hub information with deployment status."
       },
       "copy": {
-        "count": "[length(parameters('virtualHubParameters'))]",
+        "count": "[length(variables('hubConfigurations'))]",
         "input": {
-          "name": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.name.value]",
-          "resourceId": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.resourceId.value]",
-          "resourceGroupName": "[reference(format('virtualHubModule[{0}]', copyIndex())).outputs.resourceGroupName.value]"
+          "name": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.name.value]",
+          "resourceId": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.resourceId.value]",
+          "resourceGroupName": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.resourceGroupName.value]",
+          "location": "[reference(format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)).outputs.location.value]",
+          "deploymentStatus": {
+            "hasSecureHub": "[variables('hubConfigurations')[copyIndex()].deploySecureHub]",
+            "hasP2sGateway": "[variables('hubConfigurations')[copyIndex()].deployP2sGateway]",
+            "hasS2sGateway": "[variables('hubConfigurations')[copyIndex()].deployS2sGateway]",
+            "hasExpressRoute": "[variables('hubConfigurations')[copyIndex()].deployExpressRoute]"
+          }
         }
       }
     },
     "vpnServerConfigurationResourceId": {
       "type": "string",
-      "nullable": true,
       "metadata": {
-        "description": "The resource ID of the VPN Server Configuration, if created. Returns an empty string if not deployed."
+        "description": "The resource ID of the VPN Server Configuration, if created."
       },
-      "value": "[if(coalesce(tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'createP2sVpnServerConfiguration'), false()), reference('vpnServerConfiguration').outputs.resourceId.value, null())]"
+      "value": "[if(variables('createP2sVpnServerConfig'), reference('vpnServerConfiguration').outputs.resourceId.value, '')]"
+    },
+    "deploymentSummary": {
+      "type": "object",
+      "metadata": {
+        "description": "Deployment summary with component counts."
+      },
+      "value": {
+        "virtualWanName": "[reference('virtualWan').outputs.name.value]",
+        "virtualWanType": "[coalesce(tryGet(parameters('virtualWanParameters'), 'type'), 'Standard')]",
+        "totalHubs": "[length(coalesce(parameters('virtualHubParameters'), createArray()))]",
+        "p2sVpnServerConfigured": "[variables('createP2sVpnServerConfig')]",
+        "componentCounts": {
+          "secureHubs": "[length(filter(variables('hubConfigurations'), lambda('config', lambdaVariables('config').deploySecureHub)))]",
+          "p2sGateways": "[length(filter(variables('hubConfigurations'), lambda('config', lambdaVariables('config').deployP2sGateway)))]",
+          "s2sGateways": "[length(filter(variables('hubConfigurations'), lambda('config', lambdaVariables('config').deployS2sGateway)))]",
+          "expressRouteGateways": "[length(filter(variables('hubConfigurations'), lambda('config', lambdaVariables('config').deployExpressRoute)))]"
+        }
+      }
     }
   }
 }

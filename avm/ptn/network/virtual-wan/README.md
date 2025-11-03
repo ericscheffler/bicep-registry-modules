@@ -2412,41 +2412,62 @@ Secure Hub parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. |
-| [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall. |
-| [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. |
 | [`deploySecureHub`](#parameter-virtualhubparameterssecurehubparametersdeploysecurehub) | bool | Whether to deploy a Secure Hub. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. Required when deploySecureHub is true. |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`additionalPublicIpConfigurationResourceIds`](#parameter-virtualhubparameterssecurehubparametersadditionalpublicipconfigurationresourceids) | array | Additional public IP configuration resource IDs. |
+| [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall (1-100). |
+| [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. |
 | [`diagnosticSettings`](#parameter-virtualhubparameterssecurehubparametersdiagnosticsettings) | array | Diagnostic settings for the Azure Firewall in the Secure Hub. |
 | [`firewallPolicyResourceId`](#parameter-virtualhubparameterssecurehubparametersfirewallpolicyresourceid) | string | Resource ID of the firewall policy. |
 | [`publicIPAddressObject`](#parameter-virtualhubparameterssecurehubparameterspublicipaddressobject) | object | Public IP address object for the Azure Firewall. |
 | [`publicIPResourceID`](#parameter-virtualhubparameterssecurehubparameterspublicipresourceid) | string | Resource ID of the public IP address. |
 | [`routingIntent`](#parameter-virtualhubparameterssecurehubparametersroutingintent) | object | Routing intent for the Azure Firewall. |
 
+### Parameter: `virtualHubParameters.secureHubParameters.deploySecureHub`
+
+Whether to deploy a Secure Hub.
+
+- Required: Yes
+- Type: bool
+
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
 
-Name of the Azure Firewall.
+Name of the Azure Firewall. Required when deploySecureHub is true.
 
 - Required: Yes
 - Type: string
 
+### Parameter: `virtualHubParameters.secureHubParameters.additionalPublicIpConfigurationResourceIds`
+
+Additional public IP configuration resource IDs.
+
+- Required: No
+- Type: array
+
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallPublicIPCount`
 
-Number of public IPs for the Azure Firewall.
+Number of public IPs for the Azure Firewall (1-100).
 
-- Required: Yes
+- Required: No
 - Type: int
+- MinValue: 1
+- MaxValue: 100
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallSku`
 
 SKU for the Azure Firewall.
 
-- Required: Yes
+- Required: No
 - Type: string
 - Allowed:
   ```Bicep
@@ -2456,20 +2477,6 @@ SKU for the Azure Firewall.
     'Standard'
   ]
   ```
-
-### Parameter: `virtualHubParameters.secureHubParameters.deploySecureHub`
-
-Whether to deploy a Secure Hub.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `virtualHubParameters.secureHubParameters.additionalPublicIpConfigurationResourceIds`
-
-Additional public IP configuration resource IDs.
-
-- Required: No
-- Type: array
 
 ### Parameter: `virtualHubParameters.secureHubParameters.diagnosticSettings`
 
@@ -3269,10 +3276,11 @@ Tags to be applied to all resources.
 
 | Output | Type | Description |
 | :-- | :-- | :-- |
+| `deploymentSummary` | object | Deployment summary with component counts. |
 | `resourceGroupName` | string | The resource group where the resource is deployed. |
-| `virtualHubs` | array | The array containing the Virtual Hub information. |
+| `virtualHubs` | array | The array containing the Virtual Hub information with deployment status. |
 | `virtualWan` | object | Object containing the Virtual WAN information. |
-| `vpnServerConfigurationResourceId` | string | The resource ID of the VPN Server Configuration, if created. Returns an empty string if not deployed. |
+| `vpnServerConfigurationResourceId` | string | The resource ID of the VPN Server Configuration, if created. |
 
 ## Cross-referenced modules
 

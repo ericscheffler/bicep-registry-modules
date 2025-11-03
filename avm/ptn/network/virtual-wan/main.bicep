@@ -22,93 +22,123 @@ param enableTelemetry bool = true
 @description('Optional. Tags to be applied to all resources.')
 param tags object?
 
+// ============ //
+// Variables    //
+// ============ //
+
+@description('Combined tags for all resources.')
+var combinedTags = union(tags ?? {}, virtualWanParameters.?tags ?? {})
+
+@description('Computed lock settings for consistent application.')
+var computedLock = virtualWanParameters.?lock ?? lock ?? {}
+
+@description('Virtual WAN location with fallback.')
+var virtualWanLocation = virtualWanParameters.?location ?? location
+
+@description('Whether P2S VPN Server Configuration should be created.')
+var createP2sVpnServerConfig = virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration ?? false
+
+@description('Hub deployment configurations with computed flags.')
+var hubConfigurations = [
+  for (hub, i) in virtualHubParameters!: {
+    hub: hub
+    index: i
+    deploySecureHub: hub.?secureHubParameters.?deploySecureHub ?? false
+    deployP2sGateway: hub.?p2sVpnParameters.?deployP2SVpnGateway ?? false
+    deployS2sGateway: hub.?s2sVpnParameters.?deployS2SVpnGateway ?? false
+    deployExpressRoute: hub.?expressRouteParameters.?deployExpressRouteGateway ?? false
+    hubTags: union(combinedTags, hub.?tags ?? {})
+    hubLocation: hub.hubLocation
+  }
+]
+
 module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.2' = {
   name: '${uniqueString(deployment().name, location)}-${virtualWanParameters.virtualWanName}'
   params: {
     // Required parameters
     name: virtualWanParameters.virtualWanName
     // Optional parameters
-    location: virtualWanParameters.?location
+    location: virtualWanLocation
     allowBranchToBranchTraffic: virtualWanParameters.?allowBranchToBranchTraffic
     enableTelemetry: enableTelemetry
-    lock: virtualWanParameters.?lock ?? lock
+    lock: computedLock
     roleAssignments: virtualWanParameters.?roleAssignments
-    tags: tags ?? virtualWanParameters.?tags
+    tags: combinedTags
     type: virtualWanParameters.?type
   }
 }
 
 #disable-next-line BCP081
 module virtualHubModule 'br/public:avm/res/network/virtual-hub:0.4.2' = [
-  for (virtualHub, i) in virtualHubParameters!: {
-    name: '${uniqueString(deployment().name, location)}-${virtualHub.hubName}'
+  for config in hubConfigurations: {
+    name: '${uniqueString(deployment().name, location)}-${config.hub.hubName}'
     params: {
       // Required parameters
-      name: virtualHub.hubName
-      addressPrefix: virtualHub.hubAddressPrefix
-      location: virtualHub.hubLocation
+      name: config.hub.hubName
+      addressPrefix: config.hub.hubAddressPrefix
+      location: config.hubLocation
       virtualWanResourceId: virtualWan.outputs.resourceId
       // Optional parameters
-      allowBranchToBranchTraffic: virtualHub.?allowBranchToBranchTraffic
+      allowBranchToBranchTraffic: config.hub.?allowBranchToBranchTraffic
       enableTelemetry: enableTelemetry
-      hubRoutingPreference: virtualHub.?hubRoutingPreference
-      hubRouteTables: virtualHub.?hubRouteTables
-      hubVirtualNetworkConnections: virtualHub.?hubVirtualNetworkConnections
-      lock: lock ?? {}
-      routingIntent: virtualHub.?secureHubParameters.?routingIntent
-      sku: virtualHub.?sku
-      tags: tags ?? virtualHub.?tags
-      virtualRouterAsn: virtualHub.?virtualRouterAsn
-      virtualRouterIps: virtualHub.?virtualRouterIps
+      hubRoutingPreference: config.hub.?hubRoutingPreference
+      hubRouteTables: config.hub.?hubRouteTables
+      hubVirtualNetworkConnections: config.hub.?hubVirtualNetworkConnections
+      lock: computedLock
+      routingIntent: config.hub.?secureHubParameters.?routingIntent
+      sku: config.hub.?sku
+      tags: config.hubTags
+      virtualRouterAsn: config.hub.?virtualRouterAsn
+      virtualRouterIps: config.hub.?virtualRouterIps
     }
   }
 ]
 
 module firewallModule 'br/public:avm/res/network/azure-firewall:0.9.1' = [
-  for (virtualHub, i) in virtualHubParameters!: if (virtualHub.?secureHubParameters.?deploySecureHub!) {
-    name: virtualHub.?secureHubParameters.?azureFirewallName!
+  for config in hubConfigurations: if (config.deploySecureHub) {
+    name: config.hub.?secureHubParameters.?azureFirewallName!
     params: {
-      name: virtualHub.?secureHubParameters.?azureFirewallName!
-      azureSkuTier: virtualHub.?secureHubParameters.?azureFirewallSku
-      virtualHubResourceId: virtualHubModule[i].outputs.resourceId
-      firewallPolicyId: virtualHub.?secureHubParameters.?firewallPolicyResourceId
-      location: virtualHubModule[i].outputs.location
+      name: config.hub.?secureHubParameters.?azureFirewallName!
+      azureSkuTier: config.hub.?secureHubParameters.?azureFirewallSku
+      virtualHubResourceId: virtualHubModule[config.index].outputs.resourceId
+      firewallPolicyId: config.hub.?secureHubParameters.?firewallPolicyResourceId
+      location: virtualHubModule[config.index].outputs.location
       hubIPAddresses: {
         publicIPs: {
-          count: virtualHub.?secureHubParameters.?azureFirewallPublicIPCount
+          count: config.hub.?secureHubParameters.?azureFirewallPublicIPCount
         }
       }
-      publicIPAddressObject: virtualHub.?secureHubParameters.?publicIPAddressObject
-      publicIPResourceID: virtualHub.?secureHubParameters.?publicIPResourceID
-      additionalPublicIpConfigurations: virtualHub.?secureHubParameters.?additionalPublicIpConfigurationResourceIds
-      //enableForcedTunneling: virtualHub.?secureHubParameters.?enableForcedTunneling
-      //managementIPAddressObject: virtualHub.?secureHubParameters.?managementIPAddressObject
-      //managementIPResourceID: virtualHub.?secureHubParameters.?managementIPResourceID
+      publicIPAddressObject: config.hub.?secureHubParameters.?publicIPAddressObject
+      publicIPResourceID: config.hub.?secureHubParameters.?publicIPResourceID
+      additionalPublicIpConfigurations: config.hub.?secureHubParameters.?additionalPublicIpConfigurationResourceIds
+      //enableForcedTunneling: config.hub.?secureHubParameters.?enableForcedTunneling
+      //managementIPAddressObject: config.hub.?secureHubParameters.?managementIPAddressObject
+      //managementIPResourceID: config.hub.?secureHubParameters.?managementIPResourceID
       enableTelemetry: enableTelemetry
-      diagnosticSettings: virtualHub.?secureHubParameters.?diagnosticSettings
-      tags: tags ?? virtualHub.?tags
-      lock: lock ?? {}
+      diagnosticSettings: config.hub.?secureHubParameters.?diagnosticSettings
+      tags: config.hubTags
+      lock: computedLock
     }
   }
 ]
 
-module vpnServerConfiguration 'br/public:avm/res/network/vpn-server-configuration:0.1.2' = if (virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration == true) {
+module vpnServerConfiguration 'br/public:avm/res/network/vpn-server-configuration:0.1.2' = if (createP2sVpnServerConfig) {
   name: virtualWanParameters.?p2sVpnParameters.p2sVpnServerConfigurationName!
   params: {
     name: virtualWanParameters.?p2sVpnParameters.p2sVpnServerConfigurationName!
-    location: virtualWan.outputs.location
+    location: virtualWanLocation
     aadAudience: virtualWanParameters.?p2sVpnParameters.?aadAudience
     aadIssuer: virtualWanParameters.?p2sVpnParameters.?aadIssuer
     aadTenant: virtualWanParameters.?p2sVpnParameters.?aadTenant
     enableTelemetry: enableTelemetry
-    lock: lock ?? {}
+    lock: computedLock
     p2sConfigurationPolicyGroups: virtualWanParameters.?p2sVpnParameters.?p2sConfigurationPolicyGroups
     radiusClientRootCertificates: virtualWanParameters.?p2sVpnParameters.?radiusClientRootCertificates
     radiusServerAddress: virtualWanParameters.?p2sVpnParameters.?radiusServerAddress
     radiusServerRootCertificates: virtualWanParameters.?p2sVpnParameters.?radiusServerRootCertificates
     radiusServerSecret: virtualWanParameters.?p2sVpnParameters.?radiusServerSecret
     radiusServers: virtualWanParameters.?p2sVpnParameters.?radiusServers
-    tags: tags ?? virtualWanParameters.?tags
+    tags: combinedTags
     vpnAuthenticationTypes: virtualWanParameters.?p2sVpnParameters.?vpnAuthenticationTypes
     vpnClientIpsecPolicies: virtualWanParameters.?p2sVpnParameters.?vpnClientIpsecPolicies
     vpnClientRevokedCertificates: virtualWanParameters.?p2sVpnParameters.?vpnClientRevokedCertificates
@@ -120,70 +150,70 @@ module vpnServerConfiguration 'br/public:avm/res/network/vpn-server-configuratio
 }
 
 module p2sVpnGatewayModule 'br/public:avm/res/network/p2s-vpn-gateway:0.1.3' = [
-  for (virtualHub, i) in virtualHubParameters!: if (virtualHub.?p2sVpnParameters.?deployP2SVpnGateway == true) {
-    name: virtualHub.?p2sVpnParameters.?vpnGatewayName!
+  for config in hubConfigurations: if (config.deployP2sGateway) {
+    name: config.hub.?p2sVpnParameters.?vpnGatewayName!
     params: {
-      name: virtualHub.?p2sVpnParameters.?vpnGatewayName!
-      location: virtualHubModule[i].outputs.location
-      virtualHubResourceId: virtualHubModule[i].outputs.resourceId
+      name: config.hub.?p2sVpnParameters.?vpnGatewayName!
+      location: virtualHubModule[config.index].outputs.location
+      virtualHubResourceId: virtualHubModule[config.index].outputs.resourceId
       vpnServerConfigurationResourceId: vpnServerConfiguration.?outputs.?resourceId!
-      associatedRouteTableName: virtualHub.?p2sVpnParameters.?vpnGatewayAssociatedRouteTable
-      vpnGatewayScaleUnit: virtualHub.?p2sVpnParameters.?vpnGatewayScaleUnit
-      vpnClientAddressPoolAddressPrefixes: virtualHub.?p2sVpnParameters.?vpnClientAddressPoolAddressPrefixes
-      p2SConnectionConfigurationsName: virtualHub.?p2sVpnParameters.?connectionConfigurationsName
-      customDnsServers: virtualHub.?p2sVpnParameters.?customDnsServers
-      enableInternetSecurity: virtualHub.?p2sVpnParameters.?enableInternetSecurity
+      associatedRouteTableName: config.hub.?p2sVpnParameters.?vpnGatewayAssociatedRouteTable
+      vpnGatewayScaleUnit: config.hub.?p2sVpnParameters.?vpnGatewayScaleUnit
+      vpnClientAddressPoolAddressPrefixes: config.hub.?p2sVpnParameters.?vpnClientAddressPoolAddressPrefixes
+      p2SConnectionConfigurationsName: config.hub.?p2sVpnParameters.?connectionConfigurationsName
+      customDnsServers: config.hub.?p2sVpnParameters.?customDnsServers
+      enableInternetSecurity: config.hub.?p2sVpnParameters.?enableInternetSecurity
       enableTelemetry: enableTelemetry
-      inboundRouteMapResourceId: virtualHub.?p2sVpnParameters.?inboundRouteMapResourceId
-      isRoutingPreferenceInternet: virtualHub.?p2sVpnParameters.?isRoutingPreferenceInternet
-      lock: lock ?? {}
-      outboundRouteMapResourceId: virtualHub.?p2sVpnParameters.?outboundRouteMapResourceId
-      propagatedLabelNames: virtualHub.?p2sVpnParameters.?propagatedLabelNames
-      propagatedRouteTableNames: virtualHub.?p2sVpnParameters.?propagatedRouteTableNames
-      tags: tags ?? virtualHub.?tags
-      vnetRoutesStaticRoutes: virtualHub.?p2sVpnParameters.?vnetRoutesStaticRoutes
+      inboundRouteMapResourceId: config.hub.?p2sVpnParameters.?inboundRouteMapResourceId
+      isRoutingPreferenceInternet: config.hub.?p2sVpnParameters.?isRoutingPreferenceInternet
+      lock: computedLock
+      outboundRouteMapResourceId: config.hub.?p2sVpnParameters.?outboundRouteMapResourceId
+      propagatedLabelNames: config.hub.?p2sVpnParameters.?propagatedLabelNames
+      propagatedRouteTableNames: config.hub.?p2sVpnParameters.?propagatedRouteTableNames
+      tags: config.hubTags
+      vnetRoutesStaticRoutes: config.hub.?p2sVpnParameters.?vnetRoutesStaticRoutes
     }
   }
 ]
 
 module s2sVpnGatewayModule 'br/public:avm/res/network/vpn-gateway:0.2.2' = [
-  for (virtualHub, i) in virtualHubParameters!: if (virtualHub.?s2sVpnParameters.?deployS2SVpnGateway == true) {
-    name: virtualHub.?s2sVpnParameters.?vpnGatewayName!
+  for config in hubConfigurations: if (config.deployS2sGateway) {
+    name: config.hub.?s2sVpnParameters.?vpnGatewayName!
     params: {
       // Required parameters
-      name: virtualHub.?s2sVpnParameters.?vpnGatewayName!
-      location: virtualHubModule[i].outputs.location
-      virtualHubResourceId: virtualHubModule[i].outputs.resourceId
+      name: config.hub.?s2sVpnParameters.?vpnGatewayName!
+      location: virtualHubModule[config.index].outputs.location
+      virtualHubResourceId: virtualHubModule[config.index].outputs.resourceId
       // Optional parameters
-      bgpSettings: virtualHub.?s2sVpnParameters.?bgpSettings
-      enableBgpRouteTranslationForNat: virtualHub.?s2sVpnParameters.?enableBgpRouteTranslationForNat
-      isRoutingPreferenceInternet: virtualHub.?s2sVpnParameters.?isRoutingPreferenceInternet
-      natRules: virtualHub.?s2sVpnParameters.?natRules
-      vpnConnections: virtualHub.?s2sVpnParameters.?vpnConnections
-      vpnGatewayScaleUnit: virtualHub.?s2sVpnParameters.?vpnGatewayScaleUnit
+      bgpSettings: config.hub.?s2sVpnParameters.?bgpSettings
+      enableBgpRouteTranslationForNat: config.hub.?s2sVpnParameters.?enableBgpRouteTranslationForNat
+      isRoutingPreferenceInternet: config.hub.?s2sVpnParameters.?isRoutingPreferenceInternet
+      natRules: config.hub.?s2sVpnParameters.?natRules
+      vpnConnections: config.hub.?s2sVpnParameters.?vpnConnections
+      vpnGatewayScaleUnit: config.hub.?s2sVpnParameters.?vpnGatewayScaleUnit
       enableTelemetry: enableTelemetry
-      tags: tags ?? virtualHub.?tags
-      lock: lock ?? {}
+      tags: config.hubTags
+      lock: computedLock
     }
   }
 ]
 
 module expressRouteGatewayModule 'br/public:avm/res/network/express-route-gateway:0.8.0' = [
-  for (virtualHub, i) in virtualHubParameters!: if (virtualHub.?expressRouteParameters.?deployExpressRouteGateway == true) {
-    name: virtualHub.?expressRouteParameters.?expressRouteGatewayName!
+  for config in hubConfigurations: if (config.deployExpressRoute) {
+    name: config.hub.?expressRouteParameters.?expressRouteGatewayName!
     params: {
       // Required parameters
-      name: virtualHub.?expressRouteParameters.?expressRouteGatewayName!
-      location: virtualHubModule[i].outputs.location
-      virtualHubResourceId: virtualHubModule[i].outputs.resourceId
+      name: config.hub.?expressRouteParameters.?expressRouteGatewayName!
+      location: virtualHubModule[config.index].outputs.location
+      virtualHubResourceId: virtualHubModule[config.index].outputs.resourceId
       // Optional parameters
-      allowNonVirtualWanTraffic: virtualHub.?allowBranchToBranchTraffic
-      autoScaleConfigurationBoundsMin: virtualHub.?expressRouteParameters.?autoScaleConfigurationBoundsMin
-      autoScaleConfigurationBoundsMax: virtualHub.?expressRouteParameters.?autoScaleConfigurationBoundsMax
-      expressRouteConnections: virtualHub.?expressRouteParameters.?expressRouteConnections
+      allowNonVirtualWanTraffic: config.hub.?allowBranchToBranchTraffic
+      autoScaleConfigurationBoundsMin: config.hub.?expressRouteParameters.?autoScaleConfigurationBoundsMin
+      autoScaleConfigurationBoundsMax: config.hub.?expressRouteParameters.?autoScaleConfigurationBoundsMax
+      expressRouteConnections: config.hub.?expressRouteParameters.?expressRouteConnections
       enableTelemetry: enableTelemetry
-      tags: tags ?? virtualHub.?tags
-      lock: lock ?? {}
+      tags: config.hubTags
+      lock: computedLock
     }
   }
 ]
@@ -220,19 +250,40 @@ output virtualWan object = {
   resourceGroupName: virtualWan.outputs.resourceGroupName
 }
 
-@description('The array containing the Virtual Hub information.')
-output virtualHubs object[] = [
-  for (virtualHub, index) in virtualHubParameters!: {
-    name: virtualHubModule[index].outputs.name
-    resourceId: virtualHubModule[index].outputs.resourceId
-    resourceGroupName: virtualHubModule[index].outputs.resourceGroupName
+@description('The array containing the Virtual Hub information with deployment status.')
+output virtualHubs array = [
+  for config in hubConfigurations: {
+    name: virtualHubModule[config.index].outputs.name
+    resourceId: virtualHubModule[config.index].outputs.resourceId
+    resourceGroupName: virtualHubModule[config.index].outputs.resourceGroupName
+    location: virtualHubModule[config.index].outputs.location
+    deploymentStatus: {
+      hasSecureHub: config.deploySecureHub
+      hasP2sGateway: config.deployP2sGateway
+      hasS2sGateway: config.deployS2sGateway
+      hasExpressRoute: config.deployExpressRoute
+    }
   }
 ]
 
-@description('The resource ID of the VPN Server Configuration, if created. Returns an empty string if not deployed.')
-output vpnServerConfigurationResourceId string? = (virtualWanParameters.?p2sVpnParameters.?createP2sVpnServerConfiguration ?? false)
+@description('The resource ID of the VPN Server Configuration, if created.')
+output vpnServerConfigurationResourceId string = createP2sVpnServerConfig
   ? vpnServerConfiguration!.outputs.resourceId
-  : null
+  : ''
+
+@description('Deployment summary with component counts.')
+output deploymentSummary object = {
+  virtualWanName: virtualWan.outputs.name
+  virtualWanType: virtualWanParameters.?type ?? 'Standard'
+  totalHubs: length(virtualHubParameters ?? [])
+  p2sVpnServerConfigured: createP2sVpnServerConfig
+  componentCounts: {
+    secureHubs: length(filter(hubConfigurations, config => config.deploySecureHub))
+    p2sGateways: length(filter(hubConfigurations, config => config.deployP2sGateway))
+    s2sGateways: length(filter(hubConfigurations, config => config.deployS2sGateway))
+    expressRouteGateways: length(filter(hubConfigurations, config => config.deployExpressRoute))
+  }
+}
 
 @description('Imports the VPN client IPsec policies type from the VPN server configuration module.')
 import { vpnClientIpsecPoliciesType } from 'br/public:avm/res/network/vpn-server-configuration:0.1.2'
@@ -602,14 +653,16 @@ type virtualHubParameterType = {
     @description('Optional. Resource ID of the firewall policy.')
     firewallPolicyResourceId: string?
 
-    @description('Required. Name of the Azure Firewall.')
+    @description('Conditional. Name of the Azure Firewall. Required when deploySecureHub is true.')
     azureFirewallName: string
 
-    @description('Required. SKU for the Azure Firewall.')
-    azureFirewallSku: ('Premium' | 'Standard' | 'Basic')
+    @description('Optional. SKU for the Azure Firewall.')
+    azureFirewallSku: ('Premium' | 'Standard' | 'Basic')?
 
-    @description('Required. Number of public IPs for the Azure Firewall.')
-    azureFirewallPublicIPCount: int
+    @minValue(1)
+    @maxValue(100)
+    @description('Optional. Number of public IPs for the Azure Firewall (1-100).')
+    azureFirewallPublicIPCount: int?
 
     @description('Optional. Public IP address object for the Azure Firewall.')
     publicIPAddressObject: {
