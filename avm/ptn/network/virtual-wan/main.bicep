@@ -653,7 +653,7 @@ type virtualHubParameterType = {
     @description('Optional. Resource ID of the firewall policy.')
     firewallPolicyResourceId: string?
 
-    @description('Conditional. Name of the Azure Firewall. Required when deploySecureHub is true.')
+    @description('Conditional. Name of the Azure Firewall.')
     azureFirewallName: string
 
     @description('Optional. SKU for the Azure Firewall.')

@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "3134662302776334314"
+      "templateHash": "4532735705060268217"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -920,7 +920,7 @@
             "azureFirewallName": {
               "type": "string",
               "metadata": {
-                "description": "Conditional. Name of the Azure Firewall. Required when deploySecureHub is true."
+                "description": "Conditional. Name of the Azure Firewall."
               }
             },
             "azureFirewallSku": {

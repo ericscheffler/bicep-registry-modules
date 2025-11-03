@@ -2418,7 +2418,7 @@ Secure Hub parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. Required when deploySecureHub is true. |
+| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. |
 
 **Optional parameters**
 
@@ -2442,7 +2442,7 @@ Whether to deploy a Secure Hub.
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
 
-Name of the Azure Firewall. Required when deploySecureHub is true.
+Name of the Azure Firewall.
 
 - Required: Yes
 - Type: string
