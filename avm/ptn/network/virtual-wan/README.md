@@ -2414,17 +2414,12 @@ Secure Hub parameters for the Virtual Hub.
 | :-- | :-- | :-- |
 | [`deploySecureHub`](#parameter-virtualhubparameterssecurehubparametersdeploysecurehub) | bool | Whether to deploy a Secure Hub. |
 
-**Conditional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. |
-
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`additionalPublicIpConfigurationResourceIds`](#parameter-virtualhubparameterssecurehubparametersadditionalpublicipconfigurationresourceids) | array | Additional public IP configuration resource IDs. |
+| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. |
 | [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall (1-100). |
 | [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. |
 | [`diagnosticSettings`](#parameter-virtualhubparameterssecurehubparametersdiagnosticsettings) | array | Diagnostic settings for the Azure Firewall in the Secure Hub. |
@@ -2440,19 +2435,19 @@ Whether to deploy a Secure Hub.
 - Required: Yes
 - Type: bool
 
-### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
-
-Name of the Azure Firewall.
-
-- Required: No
-- Type: string
-
 ### Parameter: `virtualHubParameters.secureHubParameters.additionalPublicIpConfigurationResourceIds`
 
 Additional public IP configuration resource IDs.
 
 - Required: No
 - Type: array
+
+### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
+
+Name of the Azure Firewall.
+
+- Required: No
+- Type: string
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallPublicIPCount`
 
