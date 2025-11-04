@@ -235,10 +235,14 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
           deployExpressRouteGateway: true
           expressRouteConnections: [
             {
-              expressRouteCircuitId: '<expressRouteCircuitId>'
               name: 'dep-er-conn-nvwanmax'
-              routingWeight: 10
-              sharedKey: 'testKey123!'
+              properties: {
+                enableInternetSecurity: false
+                expressRouteCircuitPeering: {
+                  id: '<id>'
+                }
+                routingWeight: 10
+              }
             }
           ]
           expressRouteGatewayName: 'dep-er-gw-nvwanmax'
@@ -338,10 +342,14 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
             "deployExpressRouteGateway": true,
             "expressRouteConnections": [
               {
-                "expressRouteCircuitId": "<expressRouteCircuitId>",
                 "name": "dep-er-conn-nvwanmax",
-                "routingWeight": 10,
-                "sharedKey": "testKey123!"
+                "properties": {
+                  "enableInternetSecurity": false,
+                  "expressRouteCircuitPeering": {
+                    "id": "<id>"
+                  },
+                  "routingWeight": 10
+                }
               }
             ],
             "expressRouteGatewayName": "dep-er-gw-nvwanmax"
@@ -443,10 +451,14 @@ param virtualHubParameters = [
       deployExpressRouteGateway: true
       expressRouteConnections: [
         {
-          expressRouteCircuitId: '<expressRouteCircuitId>'
           name: 'dep-er-conn-nvwanmax'
-          routingWeight: 10
-          sharedKey: 'testKey123!'
+          properties: {
+            enableInternetSecurity: false
+            expressRouteCircuitPeering: {
+              id: '<id>'
+            }
+            routingWeight: 10
+          }
         }
       ]
       expressRouteGatewayName: 'dep-er-gw-nvwanmax'
@@ -1498,7 +1510,7 @@ ExpressRoute parameters for the Virtual Hub.
 | [`allowNonVirtualWanTraffic`](#parameter-virtualhubparametersexpressrouteparametersallownonvirtualwantraffic) | bool | Allow non-Virtual WAN traffic. |
 | [`autoScaleConfigurationBoundsMax`](#parameter-virtualhubparametersexpressrouteparametersautoscaleconfigurationboundsmax) | int | Maximum bound for autoscale configuration. |
 | [`autoScaleConfigurationBoundsMin`](#parameter-virtualhubparametersexpressrouteparametersautoscaleconfigurationboundsmin) | int | Minimum bound for autoscale configuration. |
-| [`expressRouteConnections`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnections) | array | ExpressRoute connections. |
+| [`expressRouteConnections`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnections) | array | ExpressRoute connections. Note: This array is passed directly to the ExpressRoute Gateway module and must match the Azure ARM API schema. |
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.deployExpressRouteGateway`
 
@@ -1537,7 +1549,7 @@ Minimum bound for autoscale configuration.
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections`
 
-ExpressRoute connections.
+ExpressRoute connections. Note: This array is passed directly to the ExpressRoute Gateway module and must match the Azure ARM API schema.
 
 - Required: No
 - Type: array
@@ -1547,22 +1559,7 @@ ExpressRoute connections.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`name`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsname) | string | Name of the ExpressRoute connection. |
-| [`routingWeight`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsroutingweight) | int | Routing weight for the connection. |
-| [`sharedKey`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionssharedkey) | string | Shared key for the connection. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`connectionBandwidth`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsconnectionbandwidth) | int | Connection bandwidth. |
-| [`enableBgp`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsenablebgp) | bool | Enable BGP for the connection. |
-| [`enableInternetSecurity`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsenableinternetsecurity) | bool | Enable internet security for the connection. |
-| [`enableRateLimiting`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsenableratelimiting) | bool | Enable rate limiting. |
-| [`expressRouteCircuitId`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsexpressroutecircuitid) | string | Resource ID of the ExpressRoute circuit. |
-| [`ipsecPolicies`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsipsecpolicies) | array | IPsec policies for the connection. |
-| [`routingIntent`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsroutingintent) | object | Routing intent for the connection. |
-| [`trafficSelectorPolicies`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionstrafficselectorpolicies) | array | Traffic selector policies for the connection. |
-| [`usePolicyBasedTrafficSelectors`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsusepolicybasedtrafficselectors) | bool | Use policy-based traffic selectors. |
+| [`properties`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsproperties) | object | Properties of the ExpressRoute connection. |
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.name`
 
@@ -1571,65 +1568,81 @@ Name of the ExpressRoute connection.
 - Required: Yes
 - Type: string
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.routingWeight`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties`
 
-Routing weight for the connection.
+Properties of the ExpressRoute connection.
 
 - Required: Yes
-- Type: int
+- Type: object
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.sharedKey`
+**Required parameters**
 
-Shared key for the connection.
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`expressRouteCircuitPeering`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesexpressroutecircuitpeering) | object | Reference to the ExpressRoute circuit peering. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`authorizationKey`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesauthorizationkey) | string | Authorization key for the connection. |
+| [`enableInternetSecurity`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesenableinternetsecurity) | bool | Enable internet security for the connection. |
+| [`enablePrivateLinkFastPath`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesenableprivatelinkfastpath) | bool | Enable private link fast path. |
+| [`expressRouteGatewayBypass`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesexpressroutegatewaybypass) | bool | Enable FastPath to vWan Firewall hub. |
+| [`routingConfiguration`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfiguration) | object | Routing configuration for the connection. |
+| [`routingWeight`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingweight) | int | Routing weight for the connection (0-32000). |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.expressRouteCircuitPeering`
+
+Reference to the ExpressRoute circuit peering.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesexpressroutecircuitpeeringid) | string | Resource ID of the ExpressRoute circuit peering (e.g., /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/AzurePrivatePeering). |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.expressRouteCircuitPeering.id`
+
+Resource ID of the ExpressRoute circuit peering (e.g., /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/AzurePrivatePeering).
 
 - Required: Yes
 - Type: string
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.connectionBandwidth`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.authorizationKey`
 
-Connection bandwidth.
-
-- Required: No
-- Type: int
-
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.enableBgp`
-
-Enable BGP for the connection.
+Authorization key for the connection.
 
 - Required: No
-- Type: bool
+- Type: string
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.enableInternetSecurity`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.enableInternetSecurity`
 
 Enable internet security for the connection.
 
 - Required: No
 - Type: bool
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.enableRateLimiting`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.enablePrivateLinkFastPath`
 
-Enable rate limiting.
+Enable private link fast path.
 
 - Required: No
 - Type: bool
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.expressRouteCircuitId`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.expressRouteGatewayBypass`
 
-Resource ID of the ExpressRoute circuit.
-
-- Required: No
-- Type: string
-
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.ipsecPolicies`
-
-IPsec policies for the connection.
+Enable FastPath to vWan Firewall hub.
 
 - Required: No
-- Type: array
+- Type: bool
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.routingIntent`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration`
 
-Routing intent for the connection.
+Routing configuration for the connection.
 
 - Required: No
 - Type: object
@@ -1638,36 +1651,118 @@ Routing intent for the connection.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`internetToFirewall`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsroutingintentinternettofirewall) | bool | Configures Routing Intent to Forward Internet traffic to the firewall (0.0.0.0/0). |
-| [`privateToFirewall`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionsroutingintentprivatetofirewall) | bool | Configures Routing Intent to forward Private traffic to the firewall (RFC1918). |
+| [`associatedRouteTable`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationassociatedroutetable) | object | Resource ID of the associated route table. |
+| [`inboundRouteMap`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationinboundroutemap) | object | Resource ID of the inbound route map. |
+| [`outboundRouteMap`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationoutboundroutemap) | object | Resource ID of the outbound route map. |
+| [`propagatedRouteTables`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationpropagatedroutetables) | object | Propagated route tables. |
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.routingIntent.internetToFirewall`
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.associatedRouteTable`
 
-Configures Routing Intent to Forward Internet traffic to the firewall (0.0.0.0/0).
-
-- Required: No
-- Type: bool
-
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.routingIntent.privateToFirewall`
-
-Configures Routing Intent to forward Private traffic to the firewall (RFC1918).
+Resource ID of the associated route table.
 
 - Required: No
-- Type: bool
+- Type: object
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.trafficSelectorPolicies`
+**Optional parameters**
 
-Traffic selector policies for the connection.
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationassociatedroutetableid) | string | Resource ID of the route table. |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.associatedRouteTable.id`
+
+Resource ID of the route table.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.inboundRouteMap`
+
+Resource ID of the inbound route map.
+
+- Required: No
+- Type: object
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationinboundroutemapid) | string | Resource ID of the route map. |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.inboundRouteMap.id`
+
+Resource ID of the route map.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.outboundRouteMap`
+
+Resource ID of the outbound route map.
+
+- Required: No
+- Type: object
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationoutboundroutemapid) | string | Resource ID of the route map. |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.outboundRouteMap.id`
+
+Resource ID of the route map.
+
+- Required: No
+- Type: string
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.propagatedRouteTables`
+
+Propagated route tables.
+
+- Required: No
+- Type: object
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`ids`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationpropagatedroutetablesids) | array | List of route table resource IDs. |
+| [`labels`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationpropagatedroutetableslabels) | array | List of labels. |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.propagatedRouteTables.ids`
+
+List of route table resource IDs.
 
 - Required: No
 - Type: array
 
-### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.usePolicyBasedTrafficSelectors`
+**Optional parameters**
 
-Use policy-based traffic selectors.
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparametersexpressrouteparametersexpressrouteconnectionspropertiesroutingconfigurationpropagatedroutetablesidsid) | string | Resource ID of the route table. |
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.propagatedRouteTables.ids.id`
+
+Resource ID of the route table.
 
 - Required: No
-- Type: bool
+- Type: string
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.propagatedRouteTables.labels`
+
+List of labels.
+
+- Required: No
+- Type: array
+
+### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingWeight`
+
+Routing weight for the connection (0-32000).
+
+- Required: No
+- Type: int
 
 ### Parameter: `virtualHubParameters.hubRouteTables`
 

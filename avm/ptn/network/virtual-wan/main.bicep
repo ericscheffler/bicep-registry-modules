@@ -605,43 +605,67 @@ type virtualHubParameterType = {
     @description('Optional. Maximum bound for autoscale configuration.')
     autoScaleConfigurationBoundsMax: int?
 
-    @description('Optional. ExpressRoute connections.')
+    @description('Optional. ExpressRoute connections. Note: This array is passed directly to the ExpressRoute Gateway module and must match the Azure ARM API schema.')
     expressRouteConnections: {
       @description('Required. Name of the ExpressRoute connection.')
       name: string
 
-      @description('Optional. Connection bandwidth.')
-      connectionBandwidth: int?
+      @description('Required. Properties of the ExpressRoute connection.')
+      properties: {
+        @description('Required. Reference to the ExpressRoute circuit peering.')
+        expressRouteCircuitPeering: {
+          @description('Required. Resource ID of the ExpressRoute circuit peering (e.g., /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/AzurePrivatePeering).')
+          id: string
+        }
 
-      @description('Optional. Enable BGP for the connection.')
-      enableBgp: bool?
+        @description('Optional. Authorization key for the connection.')
+        authorizationKey: string?
 
-      @description('Optional. Enable internet security for the connection.')
-      enableInternetSecurity: bool?
+        @description('Optional. Routing weight for the connection (0-32000).')
+        routingWeight: int?
 
-      @description('Optional. Resource ID of the ExpressRoute circuit.')
-      expressRouteCircuitId: string?
+        @description('Optional. Enable internet security for the connection.')
+        enableInternetSecurity: bool?
 
-      @description('Optional. Routing intent for the connection.')
-      routingIntent: routingIntentType?
+        @description('Optional. Enable FastPath to vWan Firewall hub.')
+        expressRouteGatewayBypass: bool?
 
-      @description('Optional. Enable rate limiting.')
-      enableRateLimiting: bool?
+        @description('Optional. Enable private link fast path.')
+        enablePrivateLinkFastPath: bool?
 
-      @description('Required. Routing weight for the connection.')
-      routingWeight: int
+        @description('Optional. Routing configuration for the connection.')
+        routingConfiguration: {
+          @description('Optional. Resource ID of the associated route table.')
+          associatedRouteTable: {
+            @description('Optional. Resource ID of the route table.')
+            id: string?
+          }?
 
-      @description('Required. Shared key for the connection.')
-      sharedKey: string
+          @description('Optional. Propagated route tables.')
+          propagatedRouteTables: {
+            @description('Optional. List of route table resource IDs.')
+            ids: {
+              @description('Optional. Resource ID of the route table.')
+              id: string?
+            }[]?
 
-      @description('Optional. Use policy-based traffic selectors.')
-      usePolicyBasedTrafficSelectors: bool?
+            @description('Optional. List of labels.')
+            labels: string[]?
+          }?
 
-      @description('Optional. IPsec policies for the connection.')
-      ipsecPolicies: []?
+          @description('Optional. Resource ID of the inbound route map.')
+          inboundRouteMap: {
+            @description('Optional. Resource ID of the route map.')
+            id: string?
+          }?
 
-      @description('Optional. Traffic selector policies for the connection.')
-      trafficSelectorPolicies: []?
+          @description('Optional. Resource ID of the outbound route map.')
+          outboundRouteMap: {
+            @description('Optional. Resource ID of the route map.')
+            id: string?
+          }?
+        }?
+      }
     }[]?
   }?
 

@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "7670736622579760164"
+      "templateHash": "5148977634789552979"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -809,90 +809,163 @@
                       "description": "Required. Name of the ExpressRoute connection."
                     }
                   },
-                  "connectionBandwidth": {
-                    "type": "int",
-                    "nullable": true,
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "expressRouteCircuitPeering": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Required. Resource ID of the ExpressRoute circuit peering (e.g., /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/AzurePrivatePeering)."
+                            }
+                          }
+                        },
+                        "metadata": {
+                          "description": "Required. Reference to the ExpressRoute circuit peering."
+                        }
+                      },
+                      "authorizationKey": {
+                        "type": "string",
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Authorization key for the connection."
+                        }
+                      },
+                      "routingWeight": {
+                        "type": "int",
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Routing weight for the connection (0-32000)."
+                        }
+                      },
+                      "enableInternetSecurity": {
+                        "type": "bool",
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Enable internet security for the connection."
+                        }
+                      },
+                      "expressRouteGatewayBypass": {
+                        "type": "bool",
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Enable FastPath to vWan Firewall hub."
+                        }
+                      },
+                      "enablePrivateLinkFastPath": {
+                        "type": "bool",
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Enable private link fast path."
+                        }
+                      },
+                      "routingConfiguration": {
+                        "type": "object",
+                        "properties": {
+                          "associatedRouteTable": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "nullable": true,
+                                "metadata": {
+                                  "description": "Optional. Resource ID of the route table."
+                                }
+                              }
+                            },
+                            "nullable": true,
+                            "metadata": {
+                              "description": "Optional. Resource ID of the associated route table."
+                            }
+                          },
+                          "propagatedRouteTables": {
+                            "type": "object",
+                            "properties": {
+                              "ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "metadata": {
+                                        "description": "Optional. Resource ID of the route table."
+                                      }
+                                    }
+                                  }
+                                },
+                                "nullable": true,
+                                "metadata": {
+                                  "description": "Optional. List of route table resource IDs."
+                                }
+                              },
+                              "labels": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "nullable": true,
+                                "metadata": {
+                                  "description": "Optional. List of labels."
+                                }
+                              }
+                            },
+                            "nullable": true,
+                            "metadata": {
+                              "description": "Optional. Propagated route tables."
+                            }
+                          },
+                          "inboundRouteMap": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "nullable": true,
+                                "metadata": {
+                                  "description": "Optional. Resource ID of the route map."
+                                }
+                              }
+                            },
+                            "nullable": true,
+                            "metadata": {
+                              "description": "Optional. Resource ID of the inbound route map."
+                            }
+                          },
+                          "outboundRouteMap": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "nullable": true,
+                                "metadata": {
+                                  "description": "Optional. Resource ID of the route map."
+                                }
+                              }
+                            },
+                            "nullable": true,
+                            "metadata": {
+                              "description": "Optional. Resource ID of the outbound route map."
+                            }
+                          }
+                        },
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Routing configuration for the connection."
+                        }
+                      }
+                    },
                     "metadata": {
-                      "description": "Optional. Connection bandwidth."
-                    }
-                  },
-                  "enableBgp": {
-                    "type": "bool",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Enable BGP for the connection."
-                    }
-                  },
-                  "enableInternetSecurity": {
-                    "type": "bool",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Enable internet security for the connection."
-                    }
-                  },
-                  "expressRouteCircuitId": {
-                    "type": "string",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Resource ID of the ExpressRoute circuit."
-                    }
-                  },
-                  "routingIntent": {
-                    "$ref": "#/definitions/routingIntentType",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Routing intent for the connection."
-                    }
-                  },
-                  "enableRateLimiting": {
-                    "type": "bool",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Enable rate limiting."
-                    }
-                  },
-                  "routingWeight": {
-                    "type": "int",
-                    "metadata": {
-                      "description": "Required. Routing weight for the connection."
-                    }
-                  },
-                  "sharedKey": {
-                    "type": "string",
-                    "metadata": {
-                      "description": "Required. Shared key for the connection."
-                    }
-                  },
-                  "usePolicyBasedTrafficSelectors": {
-                    "type": "bool",
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Use policy-based traffic selectors."
-                    }
-                  },
-                  "ipsecPolicies": {
-                    "type": "array",
-                    "prefixItems": [],
-                    "items": false,
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. IPsec policies for the connection."
-                    }
-                  },
-                  "trafficSelectorPolicies": {
-                    "type": "array",
-                    "prefixItems": [],
-                    "items": false,
-                    "nullable": true,
-                    "metadata": {
-                      "description": "Optional. Traffic selector policies for the connection."
+                      "description": "Required. Properties of the ExpressRoute connection."
                     }
                   }
                 }
               },
               "nullable": true,
               "metadata": {
-                "description": "Optional. ExpressRoute connections."
+                "description": "Optional. ExpressRoute connections. Note: This array is passed directly to the ExpressRoute Gateway module and must match the Azure ARM API schema."
               }
             }
           },

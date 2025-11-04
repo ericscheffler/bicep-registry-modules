@@ -112,9 +112,13 @@ module testDeployment '../../../main.bicep' = [
             expressRouteConnections: [
               {
                 name: 'dep-${namePrefix}-er-conn-${serviceShort}'
-                expressRouteCircuitId: nestedDependencies.outputs.expressRouteCircuitId
-                routingWeight: 10
-                sharedKey: 'testKey123!'
+                properties: {
+                  expressRouteCircuitPeering: {
+                    id: '${nestedDependencies.outputs.expressRouteCircuitId}/peerings/AzurePrivatePeering'
+                  }
+                  routingWeight: 10
+                  enableInternetSecurity: false
+                }
               }
             ]
           }
