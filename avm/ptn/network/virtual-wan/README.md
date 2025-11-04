@@ -230,13 +230,35 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
       {
         allowBranchToBranchTraffic: true
         expressRouteParameters: {
-          deployExpressRouteGateway: false
-          expressRouteGatewayName: 'unused'
+          autoScaleConfigurationBoundsMax: 2
+          autoScaleConfigurationBoundsMin: 1
+          deployExpressRouteGateway: true
+          expressRouteConnections: [
+            {
+              expressRouteCircuitId: '<expressRouteCircuitId>'
+              name: 'dep-er-conn-nvwanmax'
+              routingWeight: 10
+              sharedKey: 'testKey123!'
+            }
+          ]
+          expressRouteGatewayName: 'dep-er-gw-nvwanmax'
         }
         hubAddressPrefix: '10.0.0.0/24'
         hubLocation: '<hubLocation>'
         hubName: '<hubName>'
-        hubRoutingPreference: 'VpnGateway'
+        hubRoutingPreference: 'ASPath'
+        hubVirtualNetworkConnections: [
+          {
+            enableInternetSecurity: true
+            name: 'dep-vnetconn1-nvwanmax'
+            remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+          }
+          {
+            enableInternetSecurity: true
+            name: 'dep-vnetconn2-nvwanmax'
+            remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+          }
+        ]
         p2sVpnParameters: {
           connectionConfigurationsName: 'default'
           deployP2SVpnGateway: true
@@ -311,13 +333,35 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
         {
           "allowBranchToBranchTraffic": true,
           "expressRouteParameters": {
-            "deployExpressRouteGateway": false,
-            "expressRouteGatewayName": "unused"
+            "autoScaleConfigurationBoundsMax": 2,
+            "autoScaleConfigurationBoundsMin": 1,
+            "deployExpressRouteGateway": true,
+            "expressRouteConnections": [
+              {
+                "expressRouteCircuitId": "<expressRouteCircuitId>",
+                "name": "dep-er-conn-nvwanmax",
+                "routingWeight": 10,
+                "sharedKey": "testKey123!"
+              }
+            ],
+            "expressRouteGatewayName": "dep-er-gw-nvwanmax"
           },
           "hubAddressPrefix": "10.0.0.0/24",
           "hubLocation": "<hubLocation>",
           "hubName": "<hubName>",
-          "hubRoutingPreference": "VpnGateway",
+          "hubRoutingPreference": "ASPath",
+          "hubVirtualNetworkConnections": [
+            {
+              "enableInternetSecurity": true,
+              "name": "dep-vnetconn1-nvwanmax",
+              "remoteVirtualNetworkResourceId": "<remoteVirtualNetworkResourceId>"
+            },
+            {
+              "enableInternetSecurity": true,
+              "name": "dep-vnetconn2-nvwanmax",
+              "remoteVirtualNetworkResourceId": "<remoteVirtualNetworkResourceId>"
+            }
+          ],
           "p2sVpnParameters": {
             "connectionConfigurationsName": "default",
             "deployP2SVpnGateway": true,
@@ -394,13 +438,35 @@ param virtualHubParameters = [
   {
     allowBranchToBranchTraffic: true
     expressRouteParameters: {
-      deployExpressRouteGateway: false
-      expressRouteGatewayName: 'unused'
+      autoScaleConfigurationBoundsMax: 2
+      autoScaleConfigurationBoundsMin: 1
+      deployExpressRouteGateway: true
+      expressRouteConnections: [
+        {
+          expressRouteCircuitId: '<expressRouteCircuitId>'
+          name: 'dep-er-conn-nvwanmax'
+          routingWeight: 10
+          sharedKey: 'testKey123!'
+        }
+      ]
+      expressRouteGatewayName: 'dep-er-gw-nvwanmax'
     }
     hubAddressPrefix: '10.0.0.0/24'
     hubLocation: '<hubLocation>'
     hubName: '<hubName>'
-    hubRoutingPreference: 'VpnGateway'
+    hubRoutingPreference: 'ASPath'
+    hubVirtualNetworkConnections: [
+      {
+        enableInternetSecurity: true
+        name: 'dep-vnetconn1-nvwanmax'
+        remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+      }
+      {
+        enableInternetSecurity: true
+        name: 'dep-vnetconn2-nvwanmax'
+        remoteVirtualNetworkResourceId: '<remoteVirtualNetworkResourceId>'
+      }
+    ]
     p2sVpnParameters: {
       connectionConfigurationsName: 'default'
       deployP2SVpnGateway: true

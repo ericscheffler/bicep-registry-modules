@@ -13,6 +13,9 @@ param virtualNetwork2Name string
 @description('The location of the second virtual network.')
 param virtualNetwork2Location string
 
+@description('The name of the ExpressRoute circuit.')
+param expressRouteCircuitName string
+
 resource azureFirewallPolicy 'Microsoft.Network/firewallPolicies@2024-07-01' = {
   name: azureFirewallPolicyName
   location: resourceGroup().location
@@ -47,6 +50,23 @@ resource vnet2 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   }
 }
 
+resource expressRouteCircuit 'Microsoft.Network/expressRouteCircuits@2024-07-01' = {
+  name: expressRouteCircuitName
+  location: resourceGroup().location
+  sku: {
+    name: 'Standard_MeteredData'
+    tier: 'Standard'
+    family: 'MeteredData'
+  }
+  properties: {
+    serviceProviderProperties: {
+      serviceProviderName: 'Equinix'
+      peeringLocation: 'Silicon Valley'
+      bandwidthInMbps: 50
+    }
+  }
+}
+
 @description('The ID of the Azure Firewall Policy.')
 output azureFirewallPolicyId string = azureFirewallPolicy.id
 
@@ -73,3 +93,6 @@ output virtualNetwork2Location string = vnet2.location
 
 @description('The location of the second virtual hub; for testing purposes set as same region of the spoke virtual network.')
 output virtualHub2Location string = vnet2.location
+
+@description('The resource ID of the ExpressRoute circuit.')
+output expressRouteCircuitId string = expressRouteCircuit.id

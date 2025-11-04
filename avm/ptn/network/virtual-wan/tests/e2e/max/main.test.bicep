@@ -44,6 +44,7 @@ module nestedDependencies 'dependencies.bicep' = {
     virtualNetwork1Location: 'eastus'
     virtualNetwork2Name: 'dep-${namePrefix}-vnet2-${serviceShort}'
     virtualNetwork2Location: 'westus2'
+    expressRouteCircuitName: 'dep-${namePrefix}-erc-${serviceShort}'
   }
 }
 
@@ -77,7 +78,19 @@ module testDeployment '../../../main.bicep' = [
           hubLocation: resourceLocation
           hubName: 'dep-${namePrefix}-hub-${resourceLocation}-${serviceShort}'
           allowBranchToBranchTraffic: true
-          hubRoutingPreference: 'VpnGateway'
+          hubRoutingPreference: 'ASPath'
+          hubVirtualNetworkConnections: [
+            {
+              name: 'dep-${namePrefix}-vnetconn1-${serviceShort}'
+              remoteVirtualNetworkResourceId: nestedDependencies.outputs.virtualNetwork1Id
+              enableInternetSecurity: true
+            }
+            {
+              name: 'dep-${namePrefix}-vnetconn2-${serviceShort}'
+              remoteVirtualNetworkResourceId: nestedDependencies.outputs.virtualNetwork2Id
+              enableInternetSecurity: true
+            }
+          ]
           p2sVpnParameters: {
             deployP2SVpnGateway: true
             vpnGatewayName: 'dep-${namePrefix}-p2s-gw-${serviceShort}'
@@ -92,8 +105,18 @@ module testDeployment '../../../main.bicep' = [
             vpnGatewayScaleUnit: 1
           }
           expressRouteParameters: {
-            deployExpressRouteGateway: false
-            expressRouteGatewayName: 'unused'
+            deployExpressRouteGateway: true
+            expressRouteGatewayName: 'dep-${namePrefix}-er-gw-${serviceShort}'
+            autoScaleConfigurationBoundsMin: 1
+            autoScaleConfigurationBoundsMax: 2
+            expressRouteConnections: [
+              {
+                name: 'dep-${namePrefix}-er-conn-${serviceShort}'
+                expressRouteCircuitId: nestedDependencies.outputs.expressRouteCircuitId
+                routingWeight: 10
+                sharedKey: 'testKey123!'
+              }
+            ]
           }
           secureHubParameters: {
             deploySecureHub: false
