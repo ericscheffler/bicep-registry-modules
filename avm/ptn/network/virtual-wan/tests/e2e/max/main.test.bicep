@@ -45,6 +45,7 @@ module nestedDependencies 'dependencies.bicep' = {
     virtualNetwork2Name: 'dep-${namePrefix}-vnet2-${serviceShort}'
     virtualNetwork2Location: 'westus2'
     expressRouteCircuitName: 'dep-${namePrefix}-erc-${serviceShort}'
+    expressRoutePortName: 'dep-${namePrefix}-erp-${serviceShort}'
   }
 }
 

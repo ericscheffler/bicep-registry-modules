@@ -16,6 +16,9 @@ param virtualNetwork2Location string
 @description('The name of the ExpressRoute circuit.')
 param expressRouteCircuitName string
 
+@description('The name of the ExpressRoute port.')
+param expressRoutePortName string
+
 resource azureFirewallPolicy 'Microsoft.Network/firewallPolicies@2024-07-01' = {
   name: azureFirewallPolicyName
   location: resourceGroup().location
@@ -50,6 +53,16 @@ resource vnet2 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   }
 }
 
+resource expressRoutePort 'Microsoft.Network/ExpressRoutePorts@2024-10-01' = {
+  name: expressRoutePortName
+  properties: {
+    bandwidthInGbps: 1
+    encapsulation: 'Dot1Q'
+    peeringLocation: 'SiliconValley'
+    billingType: 'MeteredData'
+  }
+}
+
 resource expressRouteCircuit 'Microsoft.Network/expressRouteCircuits@2024-07-01' = {
   name: expressRouteCircuitName
   location: resourceGroup().location
@@ -63,6 +76,9 @@ resource expressRouteCircuit 'Microsoft.Network/expressRouteCircuits@2024-07-01'
       serviceProviderName: 'Equinix'
       peeringLocation: 'Silicon Valley'
       bandwidthInMbps: 50
+    }
+    expressRoutePort: {
+      id: expressRoutePort.id
     }
   }
 }
