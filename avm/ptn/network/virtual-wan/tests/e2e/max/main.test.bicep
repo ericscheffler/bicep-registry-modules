@@ -41,9 +41,9 @@ module nestedDependencies 'dependencies.bicep' = {
   params: {
     azureFirewallPolicyName: 'dep-${namePrefix}-fwp-${serviceShort}'
     virtualNetwork1Name: 'dep-${namePrefix}-vnet1-${serviceShort}'
-    virtualNetwork1Location: 'eastus'
+    virtualNetwork1Location: resourceLocation
     virtualNetwork2Name: 'dep-${namePrefix}-vnet2-${serviceShort}'
-    virtualNetwork2Location: 'westus2'
+    virtualNetwork2Location: resourceLocation
     expressRouteCircuitName: 'dep-${namePrefix}-erc-${serviceShort}'
     expressRoutePortName: 'dep-${namePrefix}-erp-${serviceShort}'
   }
