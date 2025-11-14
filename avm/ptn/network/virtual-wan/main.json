@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "5148977634789552979"
+      "templateHash": "9914229167913642013"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -1633,6 +1633,25 @@
     "createP2sVpnServerConfig": "[coalesce(tryGet(tryGet(parameters('virtualWanParameters'), 'p2sVpnParameters'), 'createP2sVpnServerConfiguration'), false())]"
   },
   "resources": {
+    "routingIntent": {
+      "copy": {
+        "name": "routingIntent",
+        "count": "[length(variables('hubConfigurations'))]"
+      },
+      "condition": "[and(variables('hubConfigurations')[copyIndex()].deploySecureHub, not(equals(tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'routingIntent'), null())))]",
+      "type": "Microsoft.Network/virtualHubs/routingIntent",
+      "apiVersion": "2024-07-01",
+      "name": "[format('{0}/routingIntent', variables('hubConfigurations')[copyIndex()].hub.hubName)]",
+      "properties": {
+        "routingPolicies": "[concat(if(equals(tryGet(tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'routingIntent'), 'internetToFirewall'), true()), createArray(createObject('name', 'InternetTrafficPolicy', 'destinations', createArray('Internet'), 'nextHop', tryGet(if(variables('hubConfigurations')[variables('hubConfigurations')[copyIndex()].index].deploySecureHub, reference(format('firewallModule[{0}]', variables('hubConfigurations')[copyIndex()].index)), null()), 'outputs', 'resourceId', 'value'))), createArray()), if(equals(tryGet(tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'routingIntent'), 'privateToFirewall'), true()), createArray(createObject('name', 'PrivateTrafficPolicy', 'destinations', createArray('PrivateTraffic'), 'nextHop', tryGet(if(variables('hubConfigurations')[variables('hubConfigurations')[copyIndex()].index].deploySecureHub, reference(format('firewallModule[{0}]', variables('hubConfigurations')[copyIndex()].index)), null()), 'outputs', 'resourceId', 'value'))), createArray()))]"
+      },
+      "dependsOn": [
+        "[format('firewallModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('firewallModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('firewallModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]",
+        "[format('virtualHubModule[{0}]', variables('hubConfigurations')[copyIndex()].index)]"
+      ]
+    },
     "avmTelemetry": {
       "condition": "[parameters('enableTelemetry')]",
       "type": "Microsoft.Resources/deployments",
@@ -2044,9 +2063,6 @@
           },
           "lock": {
             "value": "[variables('computedLock')]"
-          },
-          "routingIntent": {
-            "value": "[tryGet(tryGet(variables('hubConfigurations')[copyIndex()].hub, 'secureHubParameters'), 'routingIntent')]"
           },
           "sku": {
             "value": "[tryGet(variables('hubConfigurations')[copyIndex()].hub, 'sku')]"

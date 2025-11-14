@@ -53,32 +53,56 @@ resource vnet2 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   }
 }
 
-resource expressRoutePort 'Microsoft.Network/ExpressRoutePorts@2024-10-01' = {
+module testDeploymentPort 'br/public:avm/res/network/express-route-port:0.3.1' = {
   name: expressRoutePortName
-  properties: {
-    bandwidthInGbps: 1
+  params: {
+    name: expressRoutePortName
+    location: resourceGroup().location
+    bandwidthInGbps: 10
+    peeringLocation: 'Equinix-London-LD5'
     encapsulation: 'Dot1Q'
-    peeringLocation: 'SiliconValley'
     billingType: 'MeteredData'
+    tags: {
+      'hidden-title': 'Express Route Port for Circuit'
+      Environment: 'Non-Prod'
+      Role: 'DeploymentValidation'
+    }
   }
 }
 
-resource expressRouteCircuit 'Microsoft.Network/expressRouteCircuits@2024-07-01' = {
+// Deploy second circuit
+module testDeploymentCircuit 'br/public:avm/res/network/express-route-circuit:0.8.0' = {
   name: expressRouteCircuitName
-  location: resourceGroup().location
-  sku: {
-    name: 'Standard_MeteredData'
-    tier: 'Standard'
-    family: 'MeteredData'
-  }
-  properties: {
-    serviceProviderProperties: {
-      serviceProviderName: 'Equinix'
-      peeringLocation: 'Silicon Valley'
-      bandwidthInMbps: 50
-    }
-    expressRoutePort: {
-      id: expressRoutePort.id
+  params: {
+    name: expressRouteCircuitName
+    location: resourceGroup().location
+    bandwidthInGbps: 10
+    peeringLocation: 'London'
+    serviceProviderName: 'Equinix'
+    skuTier: 'Premium'
+    skuFamily: 'MeteredData'
+    globalReachEnabled: true
+    expressRoutePortResourceId: testDeploymentPort.outputs.resourceId
+    authorizationNames: [
+      'globalReachAuth1'
+    ]
+    peerings: [
+      {
+        name: 'AzurePrivatePeering'
+        properties: {
+          peeringType: 'AzurePrivatePeering'
+          peerASN: 65002
+          primaryPeerAddressPrefix: '192.168.100.0/30'
+          secondaryPeerAddressPrefix: '192.168.100.4/30'
+          vlanId: 100
+          state: 'Enabled'
+        }
+      }
+    ]
+    tags: {
+      'hidden-title': 'This is visible in the resource name'
+      Environment: 'Non-Prod'
+      Role: 'DeploymentValidation'
     }
   }
 }
@@ -111,4 +135,4 @@ output virtualNetwork2Location string = vnet2.location
 output virtualHub2Location string = vnet2.location
 
 @description('The resource ID of the ExpressRoute circuit.')
-output expressRouteCircuitId string = expressRouteCircuit.id
+output expressRouteCircuitId string = testDeploymentCircuit.outputs.resourceId

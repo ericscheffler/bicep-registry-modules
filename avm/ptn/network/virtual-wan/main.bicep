@@ -85,7 +85,7 @@ module virtualHubModule 'br/public:avm/res/network/virtual-hub:0.4.2' = [
       hubRouteTables: config.hub.?hubRouteTables
       hubVirtualNetworkConnections: config.hub.?hubVirtualNetworkConnections
       lock: computedLock
-      routingIntent: config.hub.?secureHubParameters.?routingIntent
+      // Note: routingIntent is deployed separately after firewall creation
       sku: config.hub.?sku
       tags: config.hubTags
       virtualRouterAsn: config.hub.?virtualRouterAsn
@@ -215,6 +215,39 @@ module expressRouteGatewayModule 'br/public:avm/res/network/express-route-gatewa
       tags: config.hubTags
       lock: computedLock
     }
+  }
+]
+
+// Deploy routing intent after firewall is created
+resource routingIntent 'Microsoft.Network/virtualHubs/routingIntent@2024-07-01' = [
+  for config in hubConfigurations: if (config.deploySecureHub && config.hub.?secureHubParameters.?routingIntent != null) {
+    name: '${config.hub.hubName}/routingIntent'
+    properties: {
+      routingPolicies: concat(
+        config.hub.?secureHubParameters.?routingIntent.?internetToFirewall == true
+          ? [
+              {
+                name: 'InternetTrafficPolicy'
+                destinations: ['Internet']
+                nextHop: firewallModule[config.index].?outputs.resourceId!
+              }
+            ]
+          : [],
+        config.hub.?secureHubParameters.?routingIntent.?privateToFirewall == true
+          ? [
+              {
+                name: 'PrivateTrafficPolicy'
+                destinations: ['PrivateTraffic']
+                nextHop: firewallModule[config.index].?outputs.resourceId!
+              }
+            ]
+          : []
+      )
+    }
+    dependsOn: [
+      virtualHubModule[config.index]
+      firewallModule[config.index]
+    ]
   }
 ]
 

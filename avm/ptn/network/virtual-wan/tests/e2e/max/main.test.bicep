@@ -124,10 +124,15 @@ module testDeployment '../../../main.bicep' = [
             ]
           }
           secureHubParameters: {
-            deploySecureHub: false
-            azureFirewallName: 'unused'
+            deploySecureHub: true
+            azureFirewallName: 'dep-${namePrefix}-azfw-${serviceShort}'
             azureFirewallSku: 'Standard'
             azureFirewallPublicIPCount: 1
+            routingIntent: {
+              internetToFirewall: true
+              privateToFirewall: true
+            }
+            firewallPolicyResourceId: nestedDependencies.outputs.azureFirewallPolicyId
           }
           tags: {
             HubType: 'Transit'

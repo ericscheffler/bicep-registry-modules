@@ -26,6 +26,7 @@ This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure
 | `Microsoft.Network/virtualHubs/hubRouteTables` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_hubroutetables.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs/hubRouteTables)</li></ul> |
 | `Microsoft.Network/virtualHubs/hubVirtualNetworkConnections` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_hubvirtualnetworkconnections.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs/hubVirtualNetworkConnections)</li></ul> |
 | `Microsoft.Network/virtualHubs/routingIntent` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_routingintent.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualHubs/routingIntent)</li></ul> |
+| `Microsoft.Network/virtualHubs/routingIntent` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualhubs_routingintent.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/virtualHubs/routingIntent)</li></ul> |
 | `Microsoft.Network/virtualWans` | 2024-10-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_virtualwans.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-10-01/virtualWans)</li></ul> |
 | `Microsoft.Network/vpnGateways` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_vpngateways.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/vpnGateways)</li></ul> |
 | `Microsoft.Network/vpnGateways/natRules` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.network_vpngateways_natrules.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Network/2024-07-01/vpnGateways/natRules)</li></ul> |
@@ -279,10 +280,15 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
           vpnGatewayScaleUnit: 1
         }
         secureHubParameters: {
-          azureFirewallName: 'unused'
+          azureFirewallName: 'dep-azfw-nvwanmax'
           azureFirewallPublicIPCount: 1
           azureFirewallSku: 'Standard'
-          deploySecureHub: false
+          deploySecureHub: true
+          firewallPolicyResourceId: '<firewallPolicyResourceId>'
+          routingIntent: {
+            internetToFirewall: true
+            privateToFirewall: true
+          }
         }
         tags: {
           HubType: 'Transit'
@@ -386,10 +392,15 @@ module virtualWan 'br/public:avm/ptn/network/virtual-wan:<version>' = {
             "vpnGatewayScaleUnit": 1
           },
           "secureHubParameters": {
-            "azureFirewallName": "unused",
+            "azureFirewallName": "dep-azfw-nvwanmax",
             "azureFirewallPublicIPCount": 1,
             "azureFirewallSku": "Standard",
-            "deploySecureHub": false
+            "deploySecureHub": true,
+            "firewallPolicyResourceId": "<firewallPolicyResourceId>",
+            "routingIntent": {
+              "internetToFirewall": true,
+              "privateToFirewall": true
+            }
           },
           "tags": {
             "HubType": "Transit"
@@ -495,10 +506,15 @@ param virtualHubParameters = [
       vpnGatewayScaleUnit: 1
     }
     secureHubParameters: {
-      azureFirewallName: 'unused'
+      azureFirewallName: 'dep-azfw-nvwanmax'
       azureFirewallPublicIPCount: 1
       azureFirewallSku: 'Standard'
-      deploySecureHub: false
+      deploySecureHub: true
+      firewallPolicyResourceId: '<firewallPolicyResourceId>'
+      routingIntent: {
+        internetToFirewall: true
+        privateToFirewall: true
+      }
     }
     tags: {
       HubType: 'Transit'
