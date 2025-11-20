@@ -1684,7 +1684,7 @@ Resource ID of the associated route table.
 - Required: No
 - Type: object
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -1694,7 +1694,7 @@ Resource ID of the associated route table.
 
 Resource ID of the route table.
 
-- Required: No
+- Required: Yes
 - Type: string
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.inboundRouteMap`
@@ -1714,7 +1714,7 @@ Resource ID of the inbound route map.
 
 Resource ID of the route map.
 
-- Required: No
+- Required: Yes
 - Type: string
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.outboundRouteMap`
@@ -1734,7 +1734,7 @@ Resource ID of the outbound route map.
 
 Resource ID of the route map.
 
-- Required: No
+- Required: Yes
 - Type: string
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.propagatedRouteTables`
@@ -1758,7 +1758,7 @@ List of route table resource IDs.
 - Required: No
 - Type: array
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -1768,7 +1768,7 @@ List of route table resource IDs.
 
 Resource ID of the route table.
 
-- Required: No
+- Required: Yes
 - Type: string
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteConnections.properties.routingConfiguration.propagatedRouteTables.labels`
@@ -2446,13 +2446,6 @@ VPN connections for the VPN Gateway.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`name`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsname) | string | Name of the VPN connection. |
-| [`remoteVpnSiteResourceId`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsremotevpnsiteresourceid) | string | Resource ID of the remote VPN site. |
-| [`routingWeight`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingweight) | int | Routing weight for the connection. |
-| [`sharedKey`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionssharedkey) | string | Shared key for the connection. |
-| [`useLocalAzureIpAddress`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsuselocalazureipaddress) | bool | Use local Azure IP address. |
-| [`usePolicyBasedTrafficSelectors`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsusepolicybasedtrafficselectors) | bool | Use policy-based traffic selectors. |
-| [`vpnConnectionProtocolType`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsvpnconnectionprotocoltype) | string | VPN connection protocol type. |
-| [`vpnGatewayName`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsvpngatewayname) | string | Name of the VPN Gateway. |
 
 **Optional parameters**
 
@@ -2463,69 +2456,19 @@ VPN connections for the VPN Gateway.
 | [`enableInternetSecurity`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsenableinternetsecurity) | bool | Enable internet security for the connection. |
 | [`enableRateLimiting`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsenableratelimiting) | bool | Enable rate limiting. |
 | [`ipsecPolicies`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsipsecpolicies) | array | IPsec policies for the connection. |
+| [`remoteVpnSiteResourceId`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsremotevpnsiteresourceid) | string | Resource ID of the remote VPN site. |
 | [`routingConfiguration`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfiguration) | object | Routing configuration for the connection. |
+| [`routingWeight`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingweight) | int | Routing weight for the connection. |
+| [`sharedKey`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionssharedkey) | string | Shared key for the connection. |
 | [`trafficSelectorPolicies`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionstrafficselectorpolicies) | array | Traffic selector policies for the connection. |
+| [`useLocalAzureIpAddress`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsuselocalazureipaddress) | bool | Use local Azure IP address. |
+| [`usePolicyBasedTrafficSelectors`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsusepolicybasedtrafficselectors) | bool | Use policy-based traffic selectors. |
+| [`vpnConnectionProtocolType`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsvpnconnectionprotocoltype) | string | VPN connection protocol type. |
 | [`vpnLinkConnections`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsvpnlinkconnections) | array | VPN link connections for the connection. |
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.name`
 
 Name of the VPN connection.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.remoteVpnSiteResourceId`
-
-Resource ID of the remote VPN site.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingWeight`
-
-Routing weight for the connection.
-
-- Required: Yes
-- Type: int
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.sharedKey`
-
-Shared key for the connection.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.useLocalAzureIpAddress`
-
-Use local Azure IP address.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.usePolicyBasedTrafficSelectors`
-
-Use policy-based traffic selectors.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.vpnConnectionProtocolType`
-
-VPN connection protocol type.
-
-- Required: Yes
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'IKEv1'
-    'IKEv2'
-  ]
-  ```
-
-### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.vpnGatewayName`
-
-Name of the VPN Gateway.
 
 - Required: Yes
 - Type: string
@@ -2565,6 +2508,13 @@ IPsec policies for the connection.
 - Required: No
 - Type: array
 
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.remoteVpnSiteResourceId`
+
+Resource ID of the remote VPN site.
+
+- Required: No
+- Type: string
+
 ### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration`
 
 Routing configuration for the connection.
@@ -2572,12 +2522,164 @@ Routing configuration for the connection.
 - Required: No
 - Type: object
 
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`associatedRouteTable`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationassociatedroutetable) | object | Resource ID of the associated route table. |
+| [`inboundRouteMap`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationinboundroutemap) | object | Resource ID of the inbound route map. |
+| [`outboundRouteMap`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationoutboundroutemap) | object | Resource ID of the outbound route map. |
+| [`propagatedRouteTables`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationpropagatedroutetables) | object | Propagated route tables. |
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.associatedRouteTable`
+
+Resource ID of the associated route table.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationassociatedroutetableid) | string | Resource ID of the route table. |
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.associatedRouteTable.id`
+
+Resource ID of the route table.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.inboundRouteMap`
+
+Resource ID of the inbound route map.
+
+- Required: No
+- Type: object
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationinboundroutemapid) | string | Resource ID of the route map. |
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.inboundRouteMap.id`
+
+Resource ID of the route map.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.outboundRouteMap`
+
+Resource ID of the outbound route map.
+
+- Required: No
+- Type: object
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationoutboundroutemapid) | string | Resource ID of the route map. |
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.outboundRouteMap.id`
+
+Resource ID of the route map.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.propagatedRouteTables`
+
+Propagated route tables.
+
+- Required: No
+- Type: object
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`ids`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationpropagatedroutetablesids) | array | List of route table resource IDs. |
+| [`labels`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationpropagatedroutetableslabels) | array | List of labels. |
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.propagatedRouteTables.ids`
+
+List of route table resource IDs.
+
+- Required: No
+- Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`id`](#parameter-virtualhubparameterss2svpnparametersvpnconnectionsroutingconfigurationpropagatedroutetablesidsid) | string | Resource ID of the route table. |
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.propagatedRouteTables.ids.id`
+
+Resource ID of the route table.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingConfiguration.propagatedRouteTables.labels`
+
+List of labels.
+
+- Required: No
+- Type: array
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.routingWeight`
+
+Routing weight for the connection.
+
+- Required: No
+- Type: int
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.sharedKey`
+
+Shared key for the connection.
+
+- Required: No
+- Type: string
+
 ### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.trafficSelectorPolicies`
 
 Traffic selector policies for the connection.
 
 - Required: No
 - Type: array
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.useLocalAzureIpAddress`
+
+Use local Azure IP address.
+
+- Required: No
+- Type: bool
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.usePolicyBasedTrafficSelectors`
+
+Use policy-based traffic selectors.
+
+- Required: No
+- Type: bool
+
+### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.vpnConnectionProtocolType`
+
+VPN connection protocol type.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'IKEv1'
+    'IKEv2'
+  ]
+  ```
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.vpnConnections.vpnLinkConnections`
 
@@ -3463,6 +3565,7 @@ Tags to be applied to all resources.
 
 - Required: No
 - Type: object
+- Default: `{}`
 
 ## Outputs
 

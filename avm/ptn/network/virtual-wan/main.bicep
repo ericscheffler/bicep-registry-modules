@@ -20,7 +20,7 @@ param lock lockType?
 param enableTelemetry bool = true
 
 @description('Optional. Tags to be applied to all resources.')
-param tags object?
+param tags resourceInput<'Microsoft.Network/virtualWans@2024-10-01'>.tags = {}
 
 // ============ //
 // Variables    //
@@ -189,7 +189,7 @@ module s2sVpnGatewayModule 'br/public:avm/res/network/vpn-gateway:0.2.2' = [
       enableBgpRouteTranslationForNat: config.hub.?s2sVpnParameters.?enableBgpRouteTranslationForNat
       isRoutingPreferenceInternet: config.hub.?s2sVpnParameters.?isRoutingPreferenceInternet
       natRules: config.hub.?s2sVpnParameters.?natRules
-      vpnConnections: config.hub.?s2sVpnParameters.?vpnConnections
+      vpnConnections: config.hub.?s2sVpnParameters.?vpnConnections!
       vpnGatewayScaleUnit: config.hub.?s2sVpnParameters.?vpnGatewayScaleUnit
       enableTelemetry: enableTelemetry
       tags: config.hubTags
@@ -336,6 +336,38 @@ import { hubRouteTableType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
 @description('Imports the full diagnostic setting type from the AVM common types module.')
 import { diagnosticSettingFullType } from 'br/public:avm/utl/types/avm-common-types:0.4.0'
 
+type routingConfigurationType = {
+  @description('Optional. Resource ID of the associated route table.')
+  associatedRouteTable: {
+    @description('Required. Resource ID of the route table.')
+    id: string
+  }?
+
+  @description('Optional. Propagated route tables.')
+  propagatedRouteTables: {
+    @description('Optional. List of route table resource IDs.')
+    ids: {
+      @description('Required. Resource ID of the route table.')
+      id: string
+    }[]?
+
+    @description('Optional. List of labels.')
+    labels: string[]?
+  }?
+
+  @description('Optional. Resource ID of the inbound route map.')
+  inboundRouteMap: {
+    @description('Optional. Resource ID of the route map.')
+    id: string
+  }?
+
+  @description('Optional. Resource ID of the outbound route map.')
+  outboundRouteMap: {
+    @description('Optional. Resource ID of the route map.')
+    id: string
+  }?
+}
+
 type virtualWanParameterType = {
   @description('Required. The name of the Virtual WAN.')
   virtualWanName: string
@@ -428,7 +460,7 @@ type virtualWanParameterType = {
   }[]?
 
   @description('Optional. Tags to be applied to the Virtual WAN.')
-  tags: object?
+  tags: resourceInput<'Microsoft.Network/virtualWans@2024-10-01'>.tags?
 
   @description('Optional. The type of Virtual WAN. Allowed values are Standard or Basic.')
   type: ('Standard' | 'Basic')?
@@ -574,9 +606,6 @@ type virtualHubParameterType = {
       @description('Required. Name of the VPN connection.')
       name: string
 
-      @description('Required. Name of the VPN Gateway.')
-      vpnGatewayName: string
-
       @description('Optional. Connection bandwidth.')
       connectionBandwidth: int?
 
@@ -586,29 +615,29 @@ type virtualHubParameterType = {
       @description('Optional. Enable internet security for the connection.')
       enableInternetSecurity: bool?
 
-      @description('Required. Resource ID of the remote VPN site.')
-      remoteVpnSiteResourceId: string
+      @description('Optional. Resource ID of the remote VPN site.')
+      remoteVpnSiteResourceId: string?
 
       @description('Optional. Enable rate limiting.')
       enableRateLimiting: bool?
 
       @description('Optional. Routing configuration for the connection.')
-      routingConfiguration: {}?
+      routingConfiguration: routingConfigurationType?
 
-      @description('Required. Routing weight for the connection.')
-      routingWeight: int
+      @description('Optional. Routing weight for the connection.')
+      routingWeight: int?
 
-      @description('Required. Shared key for the connection.')
-      sharedKey: string
+      @description('Optional. Shared key for the connection.')
+      sharedKey: string?
 
-      @description('Required. Use local Azure IP address.')
-      useLocalAzureIpAddress: bool
+      @description('Optional. Use local Azure IP address.')
+      useLocalAzureIpAddress: bool?
 
-      @description('Required. Use policy-based traffic selectors.')
-      usePolicyBasedTrafficSelectors: bool
+      @description('Optional. Use policy-based traffic selectors.')
+      usePolicyBasedTrafficSelectors: bool?
 
-      @description('Required. VPN connection protocol type.')
-      vpnConnectionProtocolType: ('IKEv1' | 'IKEv2')
+      @description('Optional. VPN connection protocol type.')
+      vpnConnectionProtocolType: ('IKEv1' | 'IKEv2')?
 
       @description('Optional. IPsec policies for the connection.')
       ipsecPolicies: []?
@@ -667,37 +696,7 @@ type virtualHubParameterType = {
         enablePrivateLinkFastPath: bool?
 
         @description('Optional. Routing configuration for the connection.')
-        routingConfiguration: {
-          @description('Optional. Resource ID of the associated route table.')
-          associatedRouteTable: {
-            @description('Optional. Resource ID of the route table.')
-            id: string?
-          }?
-
-          @description('Optional. Propagated route tables.')
-          propagatedRouteTables: {
-            @description('Optional. List of route table resource IDs.')
-            ids: {
-              @description('Optional. Resource ID of the route table.')
-              id: string?
-            }[]?
-
-            @description('Optional. List of labels.')
-            labels: string[]?
-          }?
-
-          @description('Optional. Resource ID of the inbound route map.')
-          inboundRouteMap: {
-            @description('Optional. Resource ID of the route map.')
-            id: string?
-          }?
-
-          @description('Optional. Resource ID of the outbound route map.')
-          outboundRouteMap: {
-            @description('Optional. Resource ID of the route map.')
-            id: string?
-          }?
-        }?
+        routingConfiguration: routingConfigurationType?
       }
     }[]?
   }?
@@ -780,7 +779,7 @@ type virtualHubParameterType = {
   sku: ('Standard' | 'Basic')?
 
   @description('Optional. Tags to be applied to the Virtual Hub.')
-  tags: object?
+  tags: resourceInput<'Microsoft.Network/virtualHubs@2024-10-01'>.tags?
 
   @description('Optional. ASN for the Virtual Router.')
   virtualRouterAsn: int?

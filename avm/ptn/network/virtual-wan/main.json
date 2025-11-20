@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "6579607411605812923"
+      "templateHash": "10145763896336215921"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -14,6 +14,93 @@
     "version": "0.1.0"
   },
   "definitions": {
+    "routingConfigurationType": {
+      "type": "object",
+      "properties": {
+        "associatedRouteTable": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Resource ID of the route table."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of the associated route table."
+          }
+        },
+        "propagatedRouteTables": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Resource ID of the route table."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. List of route table resource IDs."
+              }
+            },
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. List of labels."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Propagated route tables."
+          }
+        },
+        "inboundRouteMap": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "metadata": {
+                "description": "Optional. Resource ID of the route map."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of the inbound route map."
+          }
+        },
+        "outboundRouteMap": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "metadata": {
+                "description": "Optional. Resource ID of the route map."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of the outbound route map."
+          }
+        }
+      }
+    },
     "virtualWanParameterType": {
       "type": "object",
       "properties": {
@@ -260,10 +347,13 @@
         },
         "tags": {
           "type": "object",
-          "nullable": true,
           "metadata": {
+            "__bicep_resource_derived_type!": {
+              "source": "Microsoft.Network/virtualWans@2024-10-01#properties/tags"
+            },
             "description": "Optional. Tags to be applied to the Virtual WAN."
-          }
+          },
+          "nullable": true
         },
         "type": {
           "type": "string",
@@ -644,12 +734,6 @@
                       "description": "Required. Name of the VPN connection."
                     }
                   },
-                  "vpnGatewayName": {
-                    "type": "string",
-                    "metadata": {
-                      "description": "Required. Name of the VPN Gateway."
-                    }
-                  },
                   "connectionBandwidth": {
                     "type": "int",
                     "nullable": true,
@@ -673,8 +757,9 @@
                   },
                   "remoteVpnSiteResourceId": {
                     "type": "string",
+                    "nullable": true,
                     "metadata": {
-                      "description": "Required. Resource ID of the remote VPN site."
+                      "description": "Optional. Resource ID of the remote VPN site."
                     }
                   },
                   "enableRateLimiting": {
@@ -685,8 +770,7 @@
                     }
                   },
                   "routingConfiguration": {
-                    "type": "object",
-                    "properties": {},
+                    "$ref": "#/definitions/routingConfigurationType",
                     "nullable": true,
                     "metadata": {
                       "description": "Optional. Routing configuration for the connection."
@@ -694,26 +778,30 @@
                   },
                   "routingWeight": {
                     "type": "int",
+                    "nullable": true,
                     "metadata": {
-                      "description": "Required. Routing weight for the connection."
+                      "description": "Optional. Routing weight for the connection."
                     }
                   },
                   "sharedKey": {
                     "type": "string",
+                    "nullable": true,
                     "metadata": {
-                      "description": "Required. Shared key for the connection."
+                      "description": "Optional. Shared key for the connection."
                     }
                   },
                   "useLocalAzureIpAddress": {
                     "type": "bool",
+                    "nullable": true,
                     "metadata": {
-                      "description": "Required. Use local Azure IP address."
+                      "description": "Optional. Use local Azure IP address."
                     }
                   },
                   "usePolicyBasedTrafficSelectors": {
                     "type": "bool",
+                    "nullable": true,
                     "metadata": {
-                      "description": "Required. Use policy-based traffic selectors."
+                      "description": "Optional. Use policy-based traffic selectors."
                     }
                   },
                   "vpnConnectionProtocolType": {
@@ -722,8 +810,9 @@
                       "IKEv1",
                       "IKEv2"
                     ],
+                    "nullable": true,
                     "metadata": {
-                      "description": "Required. VPN connection protocol type."
+                      "description": "Optional. VPN connection protocol type."
                     }
                   },
                   "ipsecPolicies": {
@@ -867,95 +956,7 @@
                         }
                       },
                       "routingConfiguration": {
-                        "type": "object",
-                        "properties": {
-                          "associatedRouteTable": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "nullable": true,
-                                "metadata": {
-                                  "description": "Optional. Resource ID of the route table."
-                                }
-                              }
-                            },
-                            "nullable": true,
-                            "metadata": {
-                              "description": "Optional. Resource ID of the associated route table."
-                            }
-                          },
-                          "propagatedRouteTables": {
-                            "type": "object",
-                            "properties": {
-                              "ids": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string",
-                                      "nullable": true,
-                                      "metadata": {
-                                        "description": "Optional. Resource ID of the route table."
-                                      }
-                                    }
-                                  }
-                                },
-                                "nullable": true,
-                                "metadata": {
-                                  "description": "Optional. List of route table resource IDs."
-                                }
-                              },
-                              "labels": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                },
-                                "nullable": true,
-                                "metadata": {
-                                  "description": "Optional. List of labels."
-                                }
-                              }
-                            },
-                            "nullable": true,
-                            "metadata": {
-                              "description": "Optional. Propagated route tables."
-                            }
-                          },
-                          "inboundRouteMap": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "nullable": true,
-                                "metadata": {
-                                  "description": "Optional. Resource ID of the route map."
-                                }
-                              }
-                            },
-                            "nullable": true,
-                            "metadata": {
-                              "description": "Optional. Resource ID of the inbound route map."
-                            }
-                          },
-                          "outboundRouteMap": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "nullable": true,
-                                "metadata": {
-                                  "description": "Optional. Resource ID of the route map."
-                                }
-                              }
-                            },
-                            "nullable": true,
-                            "metadata": {
-                              "description": "Optional. Resource ID of the outbound route map."
-                            }
-                          }
-                        },
+                        "$ref": "#/definitions/routingConfigurationType",
                         "nullable": true,
                         "metadata": {
                           "description": "Optional. Routing configuration for the connection."
@@ -1123,10 +1124,13 @@
         },
         "tags": {
           "type": "object",
-          "nullable": true,
           "metadata": {
+            "__bicep_resource_derived_type!": {
+              "source": "Microsoft.Network/virtualHubs@2024-10-01#properties/tags"
+            },
             "description": "Optional. Tags to be applied to the Virtual Hub."
-          }
+          },
+          "nullable": true
         },
         "virtualRouterAsn": {
           "type": "int",
@@ -1609,10 +1613,13 @@
     },
     "tags": {
       "type": "object",
-      "nullable": true,
       "metadata": {
+        "__bicep_resource_derived_type!": {
+          "source": "Microsoft.Network/virtualWans@2024-10-01#properties/tags"
+        },
         "description": "Optional. Tags to be applied to all resources."
-      }
+      },
+      "defaultValue": {}
     }
   },
   "variables": {
