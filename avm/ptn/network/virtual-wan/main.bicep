@@ -357,13 +357,13 @@ type routingConfigurationType = {
 
   @description('Optional. Resource ID of the inbound route map.')
   inboundRouteMap: {
-    @description('Optional. Resource ID of the route map.')
+    @description('Required. Resource ID of the route map.')
     id: string
   }?
 
   @description('Optional. Resource ID of the outbound route map.')
   outboundRouteMap: {
-    @description('Optional. Resource ID of the route map.')
+    @description('Required. Resource ID of the route map.')
     id: string
   }?
 }
@@ -493,7 +493,7 @@ type virtualHubParameterType = {
     @description('Required. Whether to deploy a P2S VPN Gateway.')
     deployP2SVpnGateway: bool
 
-    @description('Conditional. Name of the connection configurations. Required when deployP2SVpnGateway is true.')
+    @description('Conditional. Name of the connection configurations. Required if deployP2SVpnGateway is true.')
     connectionConfigurationsName: string?
 
     @description('Optional. Custom DNS servers for the P2S VPN Gateway.')
@@ -520,10 +520,10 @@ type virtualHubParameterType = {
     @description('Optional. Static routes for VNet routes.')
     vnetRoutesStaticRoutes: vnetRoutesStaticRoutesType?
 
-    @description('Conditional. Name of the VPN Gateway. Required when deployP2SVpnGateway is true.')
+    @description('Conditional.Name of the VPN Gateway. Required if deployP2SVpnGateway is true.')
     vpnGatewayName: string?
 
-    @description('Conditional. Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true.')
+    @description('Conditional. Address prefixes for the VPN client address pool. Required if deployP2SVpnGateway is true.')
     vpnClientAddressPoolAddressPrefixes: array?
 
     @description('Optional. Scale unit for the VPN Gateway.')
@@ -538,7 +538,7 @@ type virtualHubParameterType = {
     @description('Required. Whether to deploy a S2S VPN Gateway.')
     deployS2SVpnGateway: bool
 
-    @description('Conditional. Name of the VPN Gateway. Required when deployS2SVpnGateway is true.')
+    @description('Conditional. Name of the VPN Gateway. Required if deployS2SVpnGateway is true.')
     vpnGatewayName: string?
 
     @description('Optional. Scale unit for the VPN Gateway.')
@@ -655,7 +655,7 @@ type virtualHubParameterType = {
     @description('Required. Whether to deploy an ExpressRoute Gateway.')
     deployExpressRouteGateway: bool
 
-    @description('Conditional. Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true.')
+    @description('Conditional. Name of the ExpressRoute Gateway. Required if deployExpressRouteGateway is true.')
     expressRouteGatewayName: string?
 
     @description('Optional. Allow non-Virtual WAN traffic.')
@@ -709,15 +709,15 @@ type virtualHubParameterType = {
     @description('Optional. Resource ID of the firewall policy.')
     firewallPolicyResourceId: string?
 
-    @description('Conditional. Name of the Azure Firewall. Required when deploySecureHub is true.')
+    @description('Conditional. Name of the Azure Firewall. Required if deploySecureHub is true.')
     azureFirewallName: string?
 
-    @description('Conditional. SKU for the Azure Firewall. Required when deploySecureHub is true.')
+    @description('Conditional. SKU for the Azure Firewall. Required if deploySecureHub is true.')
     azureFirewallSku: ('Premium' | 'Standard' | 'Basic')?
 
     @minValue(1)
     @maxValue(100)
-    @description('Conditional. Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true.')
+    @description('Conditional. Number of public IPs for the Azure Firewall (1-100). Required if deploySecureHub is true.')
     azureFirewallPublicIPCount: int?
 
     @description('Optional. Public IP address object for the Azure Firewall.')

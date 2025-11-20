@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "10145763896336215921"
+      "templateHash": "12479824357428935759"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -75,7 +75,7 @@
             "id": {
               "type": "string",
               "metadata": {
-                "description": "Optional. Resource ID of the route map."
+                "description": "Required. Resource ID of the route map."
               }
             }
           },
@@ -90,7 +90,7 @@
             "id": {
               "type": "string",
               "metadata": {
-                "description": "Optional. Resource ID of the route map."
+                "description": "Required. Resource ID of the route map."
               }
             }
           },
@@ -441,7 +441,7 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. Name of the connection configurations. Required when deployP2SVpnGateway is true."
+                "description": "Conditional. Name of the connection configurations. Required if deployP2SVpnGateway is true."
               }
             },
             "customDnsServers": {
@@ -504,14 +504,14 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. Name of the VPN Gateway. Required when deployP2SVpnGateway is true."
+                "description": "Conditional.Name of the VPN Gateway. Required if deployP2SVpnGateway is true."
               }
             },
             "vpnClientAddressPoolAddressPrefixes": {
               "type": "array",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true."
+                "description": "Conditional. Address prefixes for the VPN client address pool. Required if deployP2SVpnGateway is true."
               }
             },
             "vpnGatewayScaleUnit": {
@@ -551,7 +551,7 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. Name of the VPN Gateway. Required when deployS2SVpnGateway is true."
+                "description": "Conditional. Name of the VPN Gateway. Required if deployS2SVpnGateway is true."
               }
             },
             "vpnGatewayScaleUnit": {
@@ -868,7 +868,7 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true."
+                "description": "Conditional. Name of the ExpressRoute Gateway. Required if deployExpressRouteGateway is true."
               }
             },
             "allowNonVirtualWanTraffic": {
@@ -1000,7 +1000,7 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Conditional. Name of the Azure Firewall. Required when deploySecureHub is true."
+                "description": "Conditional. Name of the Azure Firewall. Required if deploySecureHub is true."
               }
             },
             "azureFirewallSku": {
@@ -1012,7 +1012,7 @@
               ],
               "nullable": true,
               "metadata": {
-                "description": "Conditional. SKU for the Azure Firewall. Required when deploySecureHub is true."
+                "description": "Conditional. SKU for the Azure Firewall. Required if deploySecureHub is true."
               }
             },
             "azureFirewallPublicIPCount": {
@@ -1021,7 +1021,7 @@
               "minValue": 1,
               "maxValue": 100,
               "metadata": {
-                "description": "Conditional. Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true."
+                "description": "Conditional. Number of public IPs for the Azure Firewall (1-100). Required if deploySecureHub is true."
               }
             },
             "publicIPAddressObject": {

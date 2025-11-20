@@ -1522,7 +1522,7 @@ ExpressRoute parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`expressRouteGatewayName`](#parameter-virtualhubparametersexpressrouteparametersexpressroutegatewayname) | string | Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true. |
+| [`expressRouteGatewayName`](#parameter-virtualhubparametersexpressrouteparametersexpressroutegatewayname) | string | Name of the ExpressRoute Gateway. Required if deployExpressRouteGateway is true. |
 
 **Optional parameters**
 
@@ -1542,7 +1542,7 @@ Whether to deploy an ExpressRoute Gateway.
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteGatewayName`
 
-Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true.
+Name of the ExpressRoute Gateway. Required if deployExpressRouteGateway is true.
 
 - Required: No
 - Type: string
@@ -1704,7 +1704,7 @@ Resource ID of the inbound route map.
 - Required: No
 - Type: object
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -1724,7 +1724,7 @@ Resource ID of the outbound route map.
 - Required: No
 - Type: object
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -1964,9 +1964,8 @@ Point-to-site VPN parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`connectionConfigurationsName`](#parameter-virtualhubparametersp2svpnparametersconnectionconfigurationsname) | string | Name of the connection configurations. Required when deployP2SVpnGateway is true. |
-| [`vpnClientAddressPoolAddressPrefixes`](#parameter-virtualhubparametersp2svpnparametersvpnclientaddresspooladdressprefixes) | array | Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true. |
-| [`vpnGatewayName`](#parameter-virtualhubparametersp2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. Required when deployP2SVpnGateway is true. |
+| [`connectionConfigurationsName`](#parameter-virtualhubparametersp2svpnparametersconnectionconfigurationsname) | string | Name of the connection configurations. Required if deployP2SVpnGateway is true. |
+| [`vpnClientAddressPoolAddressPrefixes`](#parameter-virtualhubparametersp2svpnparametersvpnclientaddresspooladdressprefixes) | array | Address prefixes for the VPN client address pool. Required if deployP2SVpnGateway is true. |
 
 **Optional parameters**
 
@@ -1992,24 +1991,17 @@ Whether to deploy a P2S VPN Gateway.
 
 ### Parameter: `virtualHubParameters.p2sVpnParameters.connectionConfigurationsName`
 
-Name of the connection configurations. Required when deployP2SVpnGateway is true.
+Name of the connection configurations. Required if deployP2SVpnGateway is true.
 
 - Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.p2sVpnParameters.vpnClientAddressPoolAddressPrefixes`
 
-Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true.
+Address prefixes for the VPN client address pool. Required if deployP2SVpnGateway is true.
 
 - Required: No
 - Type: array
-
-### Parameter: `virtualHubParameters.p2sVpnParameters.vpnGatewayName`
-
-Name of the VPN Gateway. Required when deployP2SVpnGateway is true.
-
-- Required: No
-- Type: string
 
 ### Parameter: `virtualHubParameters.p2sVpnParameters.customDnsServers`
 
@@ -2168,7 +2160,7 @@ Site-to-site VPN parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`vpnGatewayName`](#parameter-virtualhubparameterss2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. Required when deployS2SVpnGateway is true. |
+| [`vpnGatewayName`](#parameter-virtualhubparameterss2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. Required if deployS2SVpnGateway is true. |
 
 **Optional parameters**
 
@@ -2191,7 +2183,7 @@ Whether to deploy a S2S VPN Gateway.
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.vpnGatewayName`
 
-Name of the VPN Gateway. Required when deployS2SVpnGateway is true.
+Name of the VPN Gateway. Required if deployS2SVpnGateway is true.
 
 - Required: No
 - Type: string
@@ -2558,7 +2550,7 @@ Resource ID of the inbound route map.
 - Required: No
 - Type: object
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -2578,7 +2570,7 @@ Resource ID of the outbound route map.
 - Required: No
 - Type: object
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -2712,9 +2704,9 @@ Secure Hub parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. Required when deploySecureHub is true. |
-| [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true. |
-| [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. Required when deploySecureHub is true. |
+| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. Required if deploySecureHub is true. |
+| [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall (1-100). Required if deploySecureHub is true. |
+| [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. Required if deploySecureHub is true. |
 
 **Optional parameters**
 
@@ -2736,14 +2728,14 @@ Whether to deploy a Secure Hub.
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
 
-Name of the Azure Firewall. Required when deploySecureHub is true.
+Name of the Azure Firewall. Required if deploySecureHub is true.
 
 - Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallPublicIPCount`
 
-Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true.
+Number of public IPs for the Azure Firewall (1-100). Required if deploySecureHub is true.
 
 - Required: No
 - Type: int
@@ -2752,7 +2744,7 @@ Number of public IPs for the Azure Firewall (1-100). Required when deploySecureH
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallSku`
 
-SKU for the Azure Firewall. Required when deploySecureHub is true.
+SKU for the Azure Firewall. Required if deploySecureHub is true.
 
 - Required: No
 - Type: string
