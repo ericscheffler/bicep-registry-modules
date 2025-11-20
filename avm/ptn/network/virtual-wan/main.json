@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "12479824357428935759"
+      "templateHash": "6079993455279585982"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -504,7 +504,7 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Conditional.Name of the VPN Gateway. Required if deployP2SVpnGateway is true."
+                "description": "Conditional. Name of the VPN Gateway. Required if deployP2SVpnGateway is true."
               }
             },
             "vpnClientAddressPoolAddressPrefixes": {

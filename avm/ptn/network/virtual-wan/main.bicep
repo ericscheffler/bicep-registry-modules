@@ -520,7 +520,7 @@ type virtualHubParameterType = {
     @description('Optional. Static routes for VNet routes.')
     vnetRoutesStaticRoutes: vnetRoutesStaticRoutesType?
 
-    @description('Conditional.Name of the VPN Gateway. Required if deployP2SVpnGateway is true.')
+    @description('Conditional. Name of the VPN Gateway. Required if deployP2SVpnGateway is true.')
     vpnGatewayName: string?
 
     @description('Conditional. Address prefixes for the VPN client address pool. Required if deployP2SVpnGateway is true.')
