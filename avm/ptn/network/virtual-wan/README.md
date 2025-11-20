@@ -1966,6 +1966,7 @@ Point-to-site VPN parameters for the Virtual Hub.
 | :-- | :-- | :-- |
 | [`connectionConfigurationsName`](#parameter-virtualhubparametersp2svpnparametersconnectionconfigurationsname) | string | Name of the connection configurations. Required if deployP2SVpnGateway is true. |
 | [`vpnClientAddressPoolAddressPrefixes`](#parameter-virtualhubparametersp2svpnparametersvpnclientaddresspooladdressprefixes) | array | Address prefixes for the VPN client address pool. Required if deployP2SVpnGateway is true. |
+| [`vpnGatewayName`](#parameter-virtualhubparametersp2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. Required if deployP2SVpnGateway is true. |
 
 **Optional parameters**
 
@@ -2002,6 +2003,13 @@ Address prefixes for the VPN client address pool. Required if deployP2SVpnGatewa
 
 - Required: No
 - Type: array
+
+### Parameter: `virtualHubParameters.p2sVpnParameters.vpnGatewayName`
+
+Name of the VPN Gateway. Required if deployP2SVpnGateway is true.
+
+- Required: No
+- Type: string
 
 ### Parameter: `virtualHubParameters.p2sVpnParameters.customDnsServers`
 
