@@ -1517,7 +1517,12 @@ ExpressRoute parameters for the Virtual Hub.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`deployExpressRouteGateway`](#parameter-virtualhubparametersexpressrouteparametersdeployexpressroutegateway) | bool | Whether to deploy an ExpressRoute Gateway. |
-| [`expressRouteGatewayName`](#parameter-virtualhubparametersexpressrouteparametersexpressroutegatewayname) | string | Name of the ExpressRoute Gateway. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`expressRouteGatewayName`](#parameter-virtualhubparametersexpressrouteparametersexpressroutegatewayname) | string | Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true. |
 
 **Optional parameters**
 
@@ -1537,9 +1542,9 @@ Whether to deploy an ExpressRoute Gateway.
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.expressRouteGatewayName`
 
-Name of the ExpressRoute Gateway.
+Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.expressRouteParameters.allowNonVirtualWanTraffic`
@@ -1953,10 +1958,15 @@ Point-to-site VPN parameters for the Virtual Hub.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`connectionConfigurationsName`](#parameter-virtualhubparametersp2svpnparametersconnectionconfigurationsname) | string | Name of the connection configurations. |
 | [`deployP2SVpnGateway`](#parameter-virtualhubparametersp2svpnparametersdeployp2svpngateway) | bool | Whether to deploy a P2S VPN Gateway. |
-| [`vpnClientAddressPoolAddressPrefixes`](#parameter-virtualhubparametersp2svpnparametersvpnclientaddresspooladdressprefixes) | array | Address prefixes for the VPN client address pool. |
-| [`vpnGatewayName`](#parameter-virtualhubparametersp2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`connectionConfigurationsName`](#parameter-virtualhubparametersp2svpnparametersconnectionconfigurationsname) | string | Name of the connection configurations. Required when deployP2SVpnGateway is true. |
+| [`vpnClientAddressPoolAddressPrefixes`](#parameter-virtualhubparametersp2svpnparametersvpnclientaddresspooladdressprefixes) | array | Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true. |
+| [`vpnGatewayName`](#parameter-virtualhubparametersp2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. Required when deployP2SVpnGateway is true. |
 
 **Optional parameters**
 
@@ -1973,13 +1983,6 @@ Point-to-site VPN parameters for the Virtual Hub.
 | [`vpnGatewayAssociatedRouteTable`](#parameter-virtualhubparametersp2svpnparametersvpngatewayassociatedroutetable) | string | Associated route table for the VPN Gateway. |
 | [`vpnGatewayScaleUnit`](#parameter-virtualhubparametersp2svpnparametersvpngatewayscaleunit) | int | Scale unit for the VPN Gateway. |
 
-### Parameter: `virtualHubParameters.p2sVpnParameters.connectionConfigurationsName`
-
-Name of the connection configurations.
-
-- Required: Yes
-- Type: string
-
 ### Parameter: `virtualHubParameters.p2sVpnParameters.deployP2SVpnGateway`
 
 Whether to deploy a P2S VPN Gateway.
@@ -1987,18 +1990,25 @@ Whether to deploy a P2S VPN Gateway.
 - Required: Yes
 - Type: bool
 
+### Parameter: `virtualHubParameters.p2sVpnParameters.connectionConfigurationsName`
+
+Name of the connection configurations. Required when deployP2SVpnGateway is true.
+
+- Required: No
+- Type: string
+
 ### Parameter: `virtualHubParameters.p2sVpnParameters.vpnClientAddressPoolAddressPrefixes`
 
-Address prefixes for the VPN client address pool.
+Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `virtualHubParameters.p2sVpnParameters.vpnGatewayName`
 
-Name of the VPN Gateway.
+Name of the VPN Gateway. Required when deployP2SVpnGateway is true.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.p2sVpnParameters.customDnsServers`
@@ -2153,7 +2163,12 @@ Site-to-site VPN parameters for the Virtual Hub.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`deployS2SVpnGateway`](#parameter-virtualhubparameterss2svpnparametersdeploys2svpngateway) | bool | Whether to deploy a S2S VPN Gateway. |
-| [`vpnGatewayName`](#parameter-virtualhubparameterss2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`vpnGatewayName`](#parameter-virtualhubparameterss2svpnparametersvpngatewayname) | string | Name of the VPN Gateway. Required when deployS2SVpnGateway is true. |
 
 **Optional parameters**
 
@@ -2176,9 +2191,9 @@ Whether to deploy a S2S VPN Gateway.
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.vpnGatewayName`
 
-Name of the VPN Gateway.
+Name of the VPN Gateway. Required when deployS2SVpnGateway is true.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.s2sVpnParameters.bgpSettings`
@@ -2591,14 +2606,19 @@ Secure Hub parameters for the Virtual Hub.
 | :-- | :-- | :-- |
 | [`deploySecureHub`](#parameter-virtualhubparameterssecurehubparametersdeploysecurehub) | bool | Whether to deploy a Secure Hub. |
 
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. Required when deploySecureHub is true. |
+| [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true. |
+| [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. Required when deploySecureHub is true. |
+
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`additionalPublicIpConfigurationResourceIds`](#parameter-virtualhubparameterssecurehubparametersadditionalpublicipconfigurationresourceids) | array | Additional public IP configuration resource IDs. |
-| [`azureFirewallName`](#parameter-virtualhubparameterssecurehubparametersazurefirewallname) | string | Name of the Azure Firewall. |
-| [`azureFirewallPublicIPCount`](#parameter-virtualhubparameterssecurehubparametersazurefirewallpublicipcount) | int | Number of public IPs for the Azure Firewall (1-100). |
-| [`azureFirewallSku`](#parameter-virtualhubparameterssecurehubparametersazurefirewallsku) | string | SKU for the Azure Firewall. |
 | [`diagnosticSettings`](#parameter-virtualhubparameterssecurehubparametersdiagnosticsettings) | array | Diagnostic settings for the Azure Firewall in the Secure Hub. |
 | [`firewallPolicyResourceId`](#parameter-virtualhubparameterssecurehubparametersfirewallpolicyresourceid) | string | Resource ID of the firewall policy. |
 | [`publicIPAddressObject`](#parameter-virtualhubparameterssecurehubparameterspublicipaddressobject) | object | Public IP address object for the Azure Firewall. |
@@ -2612,23 +2632,16 @@ Whether to deploy a Secure Hub.
 - Required: Yes
 - Type: bool
 
-### Parameter: `virtualHubParameters.secureHubParameters.additionalPublicIpConfigurationResourceIds`
-
-Additional public IP configuration resource IDs.
-
-- Required: No
-- Type: array
-
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallName`
 
-Name of the Azure Firewall.
+Name of the Azure Firewall. Required when deploySecureHub is true.
 
 - Required: No
 - Type: string
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallPublicIPCount`
 
-Number of public IPs for the Azure Firewall (1-100).
+Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true.
 
 - Required: No
 - Type: int
@@ -2637,7 +2650,7 @@ Number of public IPs for the Azure Firewall (1-100).
 
 ### Parameter: `virtualHubParameters.secureHubParameters.azureFirewallSku`
 
-SKU for the Azure Firewall.
+SKU for the Azure Firewall. Required when deploySecureHub is true.
 
 - Required: No
 - Type: string
@@ -2649,6 +2662,13 @@ SKU for the Azure Firewall.
     'Standard'
   ]
   ```
+
+### Parameter: `virtualHubParameters.secureHubParameters.additionalPublicIpConfigurationResourceIds`
+
+Additional public IP configuration resource IDs.
+
+- Required: No
+- Type: array
 
 ### Parameter: `virtualHubParameters.secureHubParameters.diagnosticSettings`
 
@@ -3460,9 +3480,8 @@ This section gives you an overview of all local-referenced module files (i.e., o
 
 | Reference | Type |
 | :-- | :-- |
-| `br/public:avm/utl/types/avm-common-types:0.5.1` | Remote reference |
-| `br/public:avm/utl/types/avm-common-types:0.6.0` | Remote reference |
+| `br/public:avm/utl/types/avm-common-types:0.6.1` | Remote reference |
 
 ## Data Collection
 
-The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described in the [repository](https://aka.ms/avm/telemetry). There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft’s privacy statement. Our privacy statement is located at <https://go.microsoft.com/fwlink/?LinkID=824704>. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.
+The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described in the [repository](https://aka.ms/avm/telemetry). There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft's privacy statement. Our privacy statement is located at <https://go.microsoft.com/fwlink/?LinkID=824704>. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.

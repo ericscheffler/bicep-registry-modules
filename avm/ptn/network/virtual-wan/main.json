@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "9914229167913642013"
+      "templateHash": "6579607411605812923"
     },
     "name": "Azure Virtual WAN",
     "description": "This pattern will create a Virtual WAN and optionally create Virtual Hubs, Azure Firewalls, and VPN/ExpressRoute Gateways.",
@@ -349,8 +349,9 @@
             },
             "connectionConfigurationsName": {
               "type": "string",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Name of the connection configurations."
+                "description": "Conditional. Name of the connection configurations. Required when deployP2SVpnGateway is true."
               }
             },
             "customDnsServers": {
@@ -411,14 +412,16 @@
             },
             "vpnGatewayName": {
               "type": "string",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Name of the VPN Gateway."
+                "description": "Conditional. Name of the VPN Gateway. Required when deployP2SVpnGateway is true."
               }
             },
             "vpnClientAddressPoolAddressPrefixes": {
               "type": "array",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Address prefixes for the VPN client address pool."
+                "description": "Conditional. Address prefixes for the VPN client address pool. Required when deployP2SVpnGateway is true."
               }
             },
             "vpnGatewayScaleUnit": {
@@ -456,8 +459,9 @@
             },
             "vpnGatewayName": {
               "type": "string",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Name of the VPN Gateway."
+                "description": "Conditional. Name of the VPN Gateway. Required when deployS2SVpnGateway is true."
               }
             },
             "vpnGatewayScaleUnit": {
@@ -773,8 +777,9 @@
             },
             "expressRouteGatewayName": {
               "type": "string",
+              "nullable": true,
               "metadata": {
-                "description": "Required. Name of the ExpressRoute Gateway."
+                "description": "Conditional. Name of the ExpressRoute Gateway. Required when deployExpressRouteGateway is true."
               }
             },
             "allowNonVirtualWanTraffic": {
@@ -994,7 +999,7 @@
               "type": "string",
               "nullable": true,
               "metadata": {
-                "description": "Optional. Name of the Azure Firewall."
+                "description": "Conditional. Name of the Azure Firewall. Required when deploySecureHub is true."
               }
             },
             "azureFirewallSku": {
@@ -1006,7 +1011,7 @@
               ],
               "nullable": true,
               "metadata": {
-                "description": "Optional. SKU for the Azure Firewall."
+                "description": "Conditional. SKU for the Azure Firewall. Required when deploySecureHub is true."
               }
             },
             "azureFirewallPublicIPCount": {
@@ -1015,7 +1020,7 @@
               "minValue": 1,
               "maxValue": 100,
               "metadata": {
-                "description": "Optional. Number of public IPs for the Azure Firewall (1-100)."
+                "description": "Conditional. Number of public IPs for the Azure Firewall (1-100). Required when deploySecureHub is true."
               }
             },
             "publicIPAddressObject": {
