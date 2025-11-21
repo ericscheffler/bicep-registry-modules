@@ -66,11 +66,9 @@ module testDeployment '../../../main.bicep' = [
           }
           s2sVpnParameters: {
             deployS2SVpnGateway: false
-            vpnGatewayName: 'unused'
           }
           expressRouteParameters: {
             deployExpressRouteGateway: false
-            expressRouteGatewayName: 'unused'
           }
           secureHubParameters: {
             deploySecureHub: true

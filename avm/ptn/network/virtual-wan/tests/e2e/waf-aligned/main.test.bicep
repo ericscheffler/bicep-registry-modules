@@ -44,25 +44,22 @@ module testDeployment '../../../main.bicep' = [
       virtualWanParameters: {
         virtualWanName: 'dep-${namePrefix}-vw-${serviceShort}'
         location: resourceLocation
-        allowBranchToBranchTraffic: false // Security: Minimize lateral movement
-        type: 'Standard' // Performance: Use Standard for production workloads
+        allowBranchToBranchTraffic: false
+        type: 'Standard'
         lock: {
-          kind: 'CanNotDelete' // Reliability: Prevent accidental deletion
+          kind: 'CanNotDelete'
         }
         tags: {
-          Environment: 'Production'
-          CostCenter: 'NetworkOps'
-          Owner: 'NetworkTeam'
-          Purpose: 'WAF-Aligned-Deployment'
+          ResourceType: 'VirtualWAN'
         }
       }
       virtualHubParameters: [
         {
-          hubAddressPrefix: '10.0.0.0/23' // Operational Excellence: Larger address space for growth
+          hubAddressPrefix: '10.0.0.0/23'
           hubLocation: resourceLocation
           hubName: 'dep-${namePrefix}-hub-${resourceLocation}-${serviceShort}'
-          allowBranchToBranchTraffic: false // Security: Consistent with WAN setting
-          hubRoutingPreference: 'ExpressRoute' // Performance: Prefer ExpressRoute over VPN
+          allowBranchToBranchTraffic: false
+          hubRoutingPreference: 'ExpressRoute'
           p2sVpnParameters: {
             deployP2SVpnGateway: false
             connectionConfigurationsName: 'default'
@@ -71,26 +68,20 @@ module testDeployment '../../../main.bicep' = [
           }
           s2sVpnParameters: {
             deployS2SVpnGateway: false
-            vpnGatewayName: 'unused'
           }
           expressRouteParameters: {
             deployExpressRouteGateway: false
-            expressRouteGatewayName: 'unused'
           }
           secureHubParameters: {
             deploySecureHub: false
-            azureFirewallName: 'unused'
-            azureFirewallSku: 'Standard'
-            azureFirewallPublicIPCount: 1
           }
           tags: {
-            HubType: 'Production'
-            Monitoring: 'Enabled'
+            ResourceType: 'VirtualHub'
           }
         }
       ]
       lock: {
-        kind: 'CanNotDelete' // Reliability: Prevent accidental deletion
+        kind: 'CanNotDelete'
       }
       tags: {
         Environment: 'Production'

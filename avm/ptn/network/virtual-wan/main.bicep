@@ -52,6 +52,7 @@ var hubConfigurations = [
   }
 ]
 
+#disable-next-line BCP081
 module virtualWan 'br/public:avm/res/network/virtual-wan:0.4.2' = {
   name: '${uniqueString(deployment().name, location)}-${virtualWanParameters.virtualWanName}'
   params: {
@@ -324,49 +325,14 @@ import { vpnClientIpsecPoliciesType } from 'br/public:avm/res/network/vpn-server
 @description('Imports the VNet routes static routes type from the P2S VPN gateway module.')
 import { vnetRoutesStaticRoutesType } from 'br/public:avm/res/network/p2s-vpn-gateway:0.1.3'
 
-@description('Imports the Hub Virtual Network Connection type from the Virtual Hub module.')
-import { hubVirtualNetworkConnectionType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
-
-@description('Imports the Routing Intent type from the Virtual Hub module.')
-import { routingIntentType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
-
-@description('Imports the Hub Route Table type from the Virtual Hub module.')
-import { hubRouteTableType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
+@description('Imports types from the Virtual Hub module.')
+import { hubVirtualNetworkConnectionType, routingIntentType, hubRouteTableType } from 'br/public:avm/res/network/virtual-hub:0.4.2'
 
 @description('Imports the full diagnostic setting type from the AVM common types module.')
 import { diagnosticSettingFullType } from 'br/public:avm/utl/types/avm-common-types:0.4.0'
 
-type routingConfigurationType = {
-  @description('Optional. Resource ID of the associated route table.')
-  associatedRouteTable: {
-    @description('Required. Resource ID of the route table.')
-    id: string
-  }?
-
-  @description('Optional. Propagated route tables.')
-  propagatedRouteTables: {
-    @description('Optional. List of route table resource IDs.')
-    ids: {
-      @description('Required. Resource ID of the route table.')
-      id: string
-    }[]?
-
-    @description('Optional. List of labels.')
-    labels: string[]?
-  }?
-
-  @description('Optional. Resource ID of the inbound route map.')
-  inboundRouteMap: {
-    @description('Required. Resource ID of the route map.')
-    id: string
-  }?
-
-  @description('Optional. Resource ID of the outbound route map.')
-  outboundRouteMap: {
-    @description('Required. Resource ID of the route map.')
-    id: string
-  }?
-}
+@description('Imports the routing configuration type from the VPN Gateway module.')
+import { routingConfigurationType } from 'br/public:avm/res/network/vpn-gateway:0.2.2'
 
 type virtualWanParameterType = {
   @description('Required. The name of the Virtual WAN.')
@@ -640,13 +606,13 @@ type virtualHubParameterType = {
       vpnConnectionProtocolType: ('IKEv1' | 'IKEv2')?
 
       @description('Optional. IPsec policies for the connection.')
-      ipsecPolicies: []?
+      ipsecPolicies: array?
 
       @description('Optional. Traffic selector policies for the connection.')
-      trafficSelectorPolicies: []?
+      trafficSelectorPolicies: array?
 
       @description('Optional. VPN link connections for the connection.')
-      vpnLinkConnections: []?
+      vpnLinkConnections: array?
     }[]?
   }?
 
@@ -741,7 +707,7 @@ type virtualHubParameterType = {
     publicIPResourceID: string?
 
     @description('Optional. Additional public IP configuration resource IDs.')
-    additionalPublicIpConfigurationResourceIds: []?
+    additionalPublicIpConfigurationResourceIds: array?
 
     @description('Optional. Routing intent for the Azure Firewall.')
     routingIntent: routingIntentType?

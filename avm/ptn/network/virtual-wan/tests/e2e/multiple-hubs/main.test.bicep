@@ -59,23 +59,15 @@ module testDeployment '../../../main.bicep' = [
           hubName: 'dep-${namePrefix}-hub-${virtualHub1Location}-${serviceShort}'
           p2sVpnParameters: {
             deployP2SVpnGateway: false
-            connectionConfigurationsName: 'default'
-            vpnGatewayName: 'unused'
-            vpnClientAddressPoolAddressPrefixes: []
           }
           s2sVpnParameters: {
             deployS2SVpnGateway: false
-            vpnGatewayName: 'unused'
           }
           expressRouteParameters: {
             deployExpressRouteGateway: false
-            expressRouteGatewayName: 'unused'
           }
           secureHubParameters: {
             deploySecureHub: false
-            azureFirewallName: 'unused'
-            azureFirewallSku: 'Standard'
-            azureFirewallPublicIPCount: 1
           }
         }
         {
@@ -84,23 +76,15 @@ module testDeployment '../../../main.bicep' = [
           hubName: 'dep-${namePrefix}-hub-${virtualHub2Location}-${serviceShort}'
           p2sVpnParameters: {
             deployP2SVpnGateway: false
-            connectionConfigurationsName: 'default'
-            vpnGatewayName: 'unused'
-            vpnClientAddressPoolAddressPrefixes: []
           }
           s2sVpnParameters: {
             deployS2SVpnGateway: false
-            vpnGatewayName: 'unused'
           }
           expressRouteParameters: {
             deployExpressRouteGateway: false
-            expressRouteGatewayName: 'unused'
           }
           secureHubParameters: {
             deploySecureHub: false
-            azureFirewallName: 'unused'
-            azureFirewallSku: 'Standard'
-            azureFirewallPublicIPCount: 1
           }
         }
       ]
